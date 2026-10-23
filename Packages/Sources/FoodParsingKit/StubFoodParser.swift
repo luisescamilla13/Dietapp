@@ -25,7 +25,7 @@ public struct StubFoodParser: FoodParsing {
     }
 
     public static let sampleItems = [
-        ParsedFoodItem(name: "taco al pastor", quantity: 2, unit: "piece", searchTerm: "pork taco", estimatedGrams: 180),
-        ParsedFoodItem(name: "coca", quantity: 1, unit: "can", searchTerm: "cola soft drink", estimatedGrams: 355),
+        ParsedFoodItem(name: "dos tacos al pastor", quantity: 2, unit: "piece", searchTerm: "pork taco", estimatedGrams: 180),
+        ParsedFoodItem(name: "una coca", quantity: 1, unit: "can", searchTerm: "cola soft drink", estimatedGrams: 355),
     ]
 }
