@@ -12,24 +12,24 @@ concurrency:
 jobs:
   packages:
     name: Package tests (macOS)
-    runs-on: macos-26
+    runs-on: xcode-27
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: "27.1"
       - name: swift test
         working-directory: Packages
         run: swift test
 
   app:
     name: App build and tests (iOS Simulator)
-    runs-on: macos-26
+    runs-on: xcode-27
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: "27.1"
       - name: Pick an iPhone simulator
         # Runner images change their simulators often, so pick one instead of hardcoding a name.
         run: |
