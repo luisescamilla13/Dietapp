@@ -1,0 +1,549 @@
+{
+  "totalHits": 3,
+  "currentPage": 1,
+  "totalPages": 1,
+  "foods": [
+    {
+      "fdcId": 2709215,
+      "description": "Apple, raw",
+      "commonNames": "",
+      "additionalDescriptions": "apple, NFS",
+      "dataType": "Survey (FNDDS)",
+      "foodCode": 63101000,
+      "publishedDate": "2024-10-31",
+      "foodCategory": "Apples",
+      "foodCategoryId": 3305978,
+      "allHighlightFields": "<b>Includes</b>: <em>apple</em>, NFS",
+      "score": 293.6816,
+      "microbes": [],
+      "foodNutrients": [
+        {
+          "nutrientId": 1003,
+          "nutrientName": "Protein",
+          "nutrientNumber": "203",
+          "unitName": "G",
+          "value": 0.17,
+          "rank": 600,
+          "indentLevel": 1,
+          "foodNutrientId": 34385174
+        },
+        {
+          "nutrientId": 1004,
+          "nutrientName": "Total lipid (fat)",
+          "nutrientNumber": "204",
+          "unitName": "G",
+          "value": 0.15,
+          "rank": 800,
+          "indentLevel": 1,
+          "foodNutrientId": 34385175
+        },
+        {
+          "nutrientId": 1005,
+          "nutrientName": "Carbohydrate, by difference",
+          "nutrientNumber": "205",
+          "unitName": "G",
+          "value": 14.8,
+          "rank": 1110,
+          "indentLevel": 2,
+          "foodNutrientId": 34385176
+        },
+        {
+          "nutrientId": 1008,
+          "nutrientName": "Energy",
+          "nutrientNumber": "208",
+          "unitName": "KCAL",
+          "value": 61,
+          "rank": 300,
+          "indentLevel": 1,
+          "foodNutrientId": 34385177
+        },
+        {
+          "nutrientId": 1079,
+          "nutrientName": "Fiber, total dietary",
+          "nutrientNumber": "291",
+          "unitName": "G",
+          "value": 2.1,
+          "rank": 1200,
+          "indentLevel": 3,
+          "foodNutrientId": 34385183
+        },
+        {
+          "nutrientId": 1087,
+          "nutrientName": "Calcium, Ca",
+          "nutrientNumber": "301",
+          "unitName": "MG",
+          "value": 5,
+          "rank": 5300,
+          "indentLevel": 1,
+          "foodNutrientId": 34385184
+        }
+      ],
+      "finalFoodInputFoods": [
+        {
+          "foodDescription": "Apples, granny smith, with skin, raw",
+          "gramWeight": 20,
+          "id": 138720,
+          "portionCode": "0",
+          "portionDescription": "NONE",
+          "unit": "GM",
+          "rank": 3,
+          "retentionCode": 0,
+          "srCode": 9502,
+          "value": 20.0
+        },
+        {
+          "foodDescription": "Apples, gala, with skin, raw",
+          "gramWeight": 20,
+          "id": 138721,
+          "portionCode": "0",
+          "portionDescription": "NONE",
+          "unit": "GM",
+          "rank": 4,
+          "retentionCode": 0,
+          "srCode": 9503,
+          "value": 20.0
+        },
+        {
+          "foodDescription": "Apples, fuji, with skin, raw",
+          "gramWeight": 20,
+          "id": 138722,
+          "portionCode": "0",
+          "portionDescription": "NONE",
+          "unit": "GM",
+          "rank": 5,
+          "retentionCode": 0,
+          "srCode": 9504,
+          "value": 20.0
+        },
+        {
+          "foodDescription": "Apples, red delicious, with skin, raw",
+          "gramWeight": 20,
+          "id": 138718,
+          "portionCode": "0",
+          "portionDescription": "NONE",
+          "unit": "GM",
+          "rank": 1,
+          "retentionCode": 0,
+          "srCode": 9500,
+          "value": 20.0
+        },
+        {
+          "foodDescription": "Apples, honeycrisp, with skin, raw",
+          "gramWeight": 20,
+          "id": 138719,
+          "portionCode": "0",
+          "portionDescription": "NONE",
+          "unit": "GM",
+          "rank": 2,
+          "retentionCode": 0,
+          "srCode": 9501,
+          "value": 20.0
+        }
+      ],
+      "foodMeasures": [
+        {
+          "disseminationText": "1 small",
+          "gramWeight": 165,
+          "id": 306063,
+          "modifier": "62015",
+          "rank": 1,
+          "measureUnitAbbreviation": "undetermined",
+          "measureUnitName": "undetermined",
+          "measureUnitId": 9999
+        },
+        {
+          "disseminationText": "1 single serving package",
+          "gramWeight": 34,
+          "id": 306069,
+          "modifier": "64236",
+          "rank": 7,
+          "measureUnitAbbreviation": "undetermined",
+          "measureUnitName": "undetermined",
+          "measureUnitId": 9999
+        },
+        {
+          "disseminationText": "Quantity not specified",
+          "gramWeight": 200,
+          "id": 306070,
+          "modifier": "90000",
+          "rank": 8,
+          "measureUnitAbbreviation": "undetermined",
+          "measureUnitName": "undetermined",
+          "measureUnitId": 9999
+        },
+        {
+          "disseminationText": "1 slice",
+          "gramWeight": 25,
+          "id": 306067,
+          "modifier": "61935",
+          "rank": 5,
+          "measureUnitAbbreviation": "undetermined",
+          "measureUnitName": "undetermined",
+          "measureUnitId": 9999
+        },
+        {
+          "disseminationText": "1 medium",
+          "gramWeight": 200,
+          "id": 306064,
+          "modifier": "61238",
+          "rank": 2,
+          "measureUnitAbbreviation": "undetermined",
+          "measureUnitName": "undetermined",
+          "measureUnitId": 9999
+        },
+        {
+          "disseminationText": "1 extra large",
+          "gramWeight": 295,
+          "id": 306066,
+          "modifier": "60749",
+          "rank": 4,
+          "measureUnitAbbreviation": "undetermined",
+          "measureUnitName": "undetermined",
+          "measureUnitId": 9999
+        },
+        {
+          "disseminationText": "1 large",
+          "gramWeight": 242,
+          "id": 306065,
+          "modifier": "60919",
+          "rank": 3,
+          "measureUnitAbbreviation": "undetermined",
+          "measureUnitName": "undetermined",
+          "measureUnitId": 9999
+        },
+        {
+          "disseminationText": "1 cup",
+          "gramWeight": 125,
+          "id": 306068,
+          "modifier": "10205",
+          "rank": 6,
+          "measureUnitAbbreviation": "undetermined",
+          "measureUnitName": "undetermined",
+          "measureUnitId": 9999
+        }
+      ],
+      "foodAttributes": [
+        {
+          "value": "Apples",
+          "name": "WWEIA Category description",
+          "id": 3305978
+        },
+        {
+          "value": "6002",
+          "name": "WWEIA Category number",
+          "id": 3305977
+        },
+        {
+          "value": "Moisture change: 0%",
+          "id": 3322655
+        },
+        {
+          "value": "apple, NFS",
+          "id": 3315921,
+          "sequenceNumber": 1
+        }
+      ],
+      "foodAttributeTypes": [
+        {
+          "name": "Additional Description",
+          "description": "Additional descriptions for the food.",
+          "id": 1001,
+          "foodAttributes": [
+            {
+              "value": "apple, NFS",
+              "id": 3315921,
+              "sequenceNumber": 1
+            }
+          ]
+        },
+        {
+          "name": "Adjustments",
+          "description": "Adjustments made to foods, including moisture changes",
+          "id": 1002,
+          "foodAttributes": [
+            {
+              "value": "Moisture change: 0%",
+              "id": 3322655
+            }
+          ]
+        },
+        {
+          "name": "Attribute",
+          "description": "Generic attributes",
+          "id": 999,
+          "foodAttributes": [
+            {
+              "value": "Apples",
+              "name": "WWEIA Category description",
+              "id": 3305978
+            },
+            {
+              "value": "6002",
+              "name": "WWEIA Category number",
+              "id": 3305977
+            }
+          ]
+        }
+      ],
+      "foodVersionIds": []
+    },
+    {
+      "fdcId": 1750340,
+      "description": "Apples, fuji, with skin, raw",
+      "scientificName": "Malus domestica",
+      "commonNames": "",
+      "additionalDescriptions": "",
+      "dataType": "Foundation",
+      "ndbNumber": 9504,
+      "publishedDate": "2020-10-30",
+      "foodCategory": "Fruits and Fruit Juices",
+      "mostRecentAcquisitionDate": "2020-05-05",
+      "allHighlightFields": "",
+      "score": 227.94183,
+      "microbes": [],
+      "foodNutrients": [
+        {
+          "nutrientId": 1004,
+          "nutrientName": "Total lipid (fat)",
+          "nutrientNumber": "204",
+          "unitName": "G",
+          "derivationCode": "A",
+          "derivationDescription": "Analytical",
+          "derivationId": 1,
+          "value": 0.162,
+          "foodNutrientSourceId": 1,
+          "foodNutrientSourceCode": "1",
+          "foodNutrientSourceDescription": "Analytical or derived from analytical",
+          "rank": 800,
+          "indentLevel": 1,
+          "foodNutrientId": 21115474,
+          "dataPoints": 8,
+          "min": 0.0,
+          "max": 0.3,
+          "median": 0.2
+        },
+        {
+          "nutrientId": 1079,
+          "nutrientName": "Fiber, total dietary",
+          "nutrientNumber": "291",
+          "unitName": "G",
+          "derivationCode": "A",
+          "derivationDescription": "Analytical",
+          "derivationId": 1,
+          "value": 2.08,
+          "foodNutrientSourceId": 1,
+          "foodNutrientSourceCode": "1",
+          "foodNutrientSourceDescription": "Analytical or derived from analytical",
+          "rank": 1200,
+          "indentLevel": 3,
+          "foodNutrientId": 21115481,
+          "dataPoints": 8,
+          "min": 1.89,
+          "max": 2.32,
+          "median": 2.06
+        },
+        {
+          "nutrientId": 1087,
+          "nutrientName": "Calcium, Ca",
+          "nutrientNumber": "301",
+          "unitName": "MG",
+          "derivationCode": "A",
+          "derivationDescription": "Analytical",
+          "derivationId": 1,
+          "value": 5.98,
+          "foodNutrientSourceId": 1,
+          "foodNutrientSourceCode": "1",
+          "foodNutrientSourceDescription": "Analytical or derived from analytical",
+          "rank": 5300,
+          "indentLevel": 1,
+          "foodNutrientId": 21115482,
+          "dataPoints": 8,
+          "min": 4.91,
+          "max": 6.67,
+          "median": 6.06
+        },
+        {
+          "nutrientId": 1003,
+          "nutrientName": "Protein",
+          "nutrientNumber": "203",
+          "unitName": "G",
+          "derivationCode": "NC",
+          "derivationDescription": "Calculated",
+          "derivationId": 49,
+          "value": 0.148,
+          "foodNutrientSourceId": 2,
+          "foodNutrientSourceCode": "4",
+          "foodNutrientSourceDescription": "Calculated or imputed",
+          "rank": 600,
+          "indentLevel": 1,
+          "foodNutrientId": 21115520,
+          "min": 0.0,
+          "max": 0.25,
+          "median": 0.125
+        },
+        {
+          "nutrientId": 1005,
+          "nutrientName": "Carbohydrate, by difference",
+          "nutrientNumber": "205",
+          "unitName": "G",
+          "derivationCode": "NC",
+          "derivationDescription": "Calculated",
+          "derivationId": 49,
+          "value": 15.7,
+          "foodNutrientSourceId": 2,
+          "foodNutrientSourceCode": "4",
+          "foodNutrientSourceDescription": "Calculated or imputed",
+          "rank": 1110,
+          "indentLevel": 2,
+          "foodNutrientId": 21115521
+        },
+        {
+          "nutrientId": 2047,
+          "nutrientName": "Energy (Atwater General Factors)",
+          "nutrientNumber": "957",
+          "unitName": "KCAL",
+          "derivationCode": "NC",
+          "derivationDescription": "Calculated",
+          "derivationId": 49,
+          "value": 64.7,
+          "foodNutrientSourceId": 2,
+          "foodNutrientSourceCode": "4",
+          "foodNutrientSourceDescription": "Calculated or imputed",
+          "rank": 280,
+          "indentLevel": 1,
+          "foodNutrientId": 21115522
+        },
+        {
+          "nutrientId": 2048,
+          "nutrientName": "Energy (Atwater Specific Factors)",
+          "nutrientNumber": "958",
+          "unitName": "KCAL",
+          "derivationCode": "NC",
+          "derivationDescription": "Calculated",
+          "derivationId": 49,
+          "value": 58.2,
+          "foodNutrientSourceId": 2,
+          "foodNutrientSourceCode": "4",
+          "foodNutrientSourceDescription": "Calculated or imputed",
+          "rank": 290,
+          "indentLevel": 1,
+          "foodNutrientId": 21115523
+        }
+      ],
+      "finalFoodInputFoods": [],
+      "foodMeasures": [],
+      "foodAttributes": [],
+      "foodAttributeTypes": [],
+      "foodVersionIds": []
+    },
+    {
+      "fdcId": 174988,
+      "description": "Croissants, apple",
+      "commonNames": "",
+      "additionalDescriptions": "",
+      "dataType": "SR Legacy",
+      "ndbNumber": 18240,
+      "publishedDate": "2019-04-01",
+      "foodCategory": "Baked Products",
+      "allHighlightFields": "",
+      "score": 271.02493,
+      "microbes": [],
+      "foodNutrients": [
+        {
+          "nutrientId": 1062,
+          "nutrientName": "Energy",
+          "nutrientNumber": "268",
+          "unitName": "kJ",
+          "value": 1060.0,
+          "rank": 400,
+          "indentLevel": 1,
+          "foodNutrientId": 1904530,
+          "dataPoints": 0
+        },
+        {
+          "nutrientId": 1004,
+          "nutrientName": "Total lipid (fat)",
+          "nutrientNumber": "204",
+          "unitName": "G",
+          "value": 8.7,
+          "rank": 800,
+          "indentLevel": 1,
+          "foodNutrientId": 1904536,
+          "dataPoints": 3
+        },
+        {
+          "nutrientId": 1005,
+          "nutrientName": "Carbohydrate, by difference",
+          "nutrientNumber": "205",
+          "unitName": "G",
+          "derivationCode": "NC",
+          "derivationDescription": "Calculated",
+          "derivationId": 49,
+          "value": 37.1,
+          "foodNutrientSourceId": 2,
+          "foodNutrientSourceCode": "4",
+          "foodNutrientSourceDescription": "Calculated or imputed",
+          "rank": 1110,
+          "indentLevel": 2,
+          "foodNutrientId": 1904537,
+          "dataPoints": 0
+        },
+        {
+          "nutrientId": 1008,
+          "nutrientName": "Energy",
+          "nutrientNumber": "208",
+          "unitName": "KCAL",
+          "derivationCode": "NC",
+          "derivationDescription": "Calculated",
+          "derivationId": 49,
+          "value": 254,
+          "foodNutrientSourceId": 2,
+          "foodNutrientSourceCode": "4",
+          "foodNutrientSourceDescription": "Calculated or imputed",
+          "rank": 300,
+          "indentLevel": 1,
+          "foodNutrientId": 1904538,
+          "dataPoints": 0
+        },
+        {
+          "nutrientId": 1087,
+          "nutrientName": "Calcium, Ca",
+          "nutrientNumber": "301",
+          "unitName": "MG",
+          "value": 30.0,
+          "rank": 5300,
+          "indentLevel": 1,
+          "foodNutrientId": 1904540,
+          "dataPoints": 2
+        },
+        {
+          "nutrientId": 1003,
+          "nutrientName": "Protein",
+          "nutrientNumber": "203",
+          "unitName": "G",
+          "value": 7.4,
+          "rank": 600,
+          "indentLevel": 1,
+          "foodNutrientId": 1904566,
+          "dataPoints": 2
+        },
+        {
+          "nutrientId": 1079,
+          "nutrientName": "Fiber, total dietary",
+          "nutrientNumber": "291",
+          "unitName": "G",
+          "value": 2.5,
+          "rank": 1200,
+          "indentLevel": 3,
+          "foodNutrientId": 1904568,
+          "dataPoints": 0
+        }
+      ],
+      "finalFoodInputFoods": [],
+      "foodMeasures": [],
+      "foodAttributes": [],
+      "foodAttributeTypes": [],
+      "foodVersionIds": []
+    }
+  ]
+}

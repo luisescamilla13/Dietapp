@@ -54,8 +54,11 @@ You can get a free USDA API key at [fdc.nal.usda.gov](https://fdc.nal.usda.gov/a
 Running the tests:
 
 ```sh
-# Package tests on macOS
+# Package tests on macOS (offline, using recorded USDA responses)
 cd Packages && swift test
+
+# Also run the tests that call the real USDA API
+USDA_API_KEY=your_key swift test
 
 # App tests on the simulator
 xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
