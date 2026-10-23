@@ -13,6 +13,7 @@ jobs:
   packages:
     name: Package tests (macOS)
     runs-on: xcode-27
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
       - uses: maxim-lobanov/setup-xcode@v1
@@ -25,6 +26,8 @@ jobs:
   app:
     name: App build and tests (iOS Simulator)
     runs-on: xcode-27
+    # A normal run takes 4 to 7 minutes; fail fast if the simulator hangs.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
       - uses: maxim-lobanov/setup-xcode@v1

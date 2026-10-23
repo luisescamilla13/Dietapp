@@ -1,17 +1,34 @@
-//
-//  DietappApp.swift
-//  Dietapp
-//
-//  Created by Kenzo on 23/10/26.
-//
-
+import LoggingKit
+import NutritionKit
+import SwiftData
 import SwiftUI
 
 @main
 struct DietappApp: App {
+    private let container: ModelContainer
+    private let nutritionSearch: any NutritionSearching
+    @State private var goals = GoalsSettings()
+
+    init() {
+        // Launch arguments let UI tests and the agent harness run without touching
+        // real data or the network.
+        let arguments = ProcessInfo.processInfo.arguments
+        nutritionSearch = arguments.contains("-stub-search")
+            ? StubNutritionSearch()
+            : USDAClient(apiKey: AppConfiguration.usdaAPIKey)
+        do {
+            container = try FoodLog.makeContainer(inMemory: arguments.contains("-in-memory-store"))
+        } catch {
+            fatalError("Could not open the food log store: \(error)")
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .environment(\.nutritionSearch, nutritionSearch)
+                .environment(goals)
         }
+        .modelContainer(container)
     }
 }

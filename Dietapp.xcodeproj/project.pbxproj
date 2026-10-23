@@ -31,10 +31,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		D28FDFA0308BDF000005912D /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		D28FDF4F308BDEED0005912D /* Dietapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dietapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28FDF5C308BDEEE0005912D /* DietappTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DietappTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28FDF66308BDEEF0005912D /* DietappUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DietappUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D28FDFA0308BDF000005912D /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
