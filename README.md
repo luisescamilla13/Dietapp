@@ -64,7 +64,7 @@ xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
 
 ## Roadmap
 
-- [ ] **Phase 0:** project foundation, modules, CI
+- [x] **Phase 0:** project foundation, modules, CI
 - [ ] **Phase 1:** food logging MVP: USDA search, meals, daily totals, history charts
 - [ ] **Phase 2:** barcode scanning with Open Food Facts
 - [ ] **Phase 3:** text and voice logging with on-device Foundation Models
