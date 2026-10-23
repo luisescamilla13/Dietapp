@@ -1,3 +1,4 @@
+import FoodParsingKit
 import LoggingKit
 import NutritionKit
 import SwiftData
@@ -11,6 +12,7 @@ struct FoodSearchView: View {
     let day: Date
 
     @Environment(\.nutritionSearch) private var nutritionSearch
+    @Environment(\.foodParser) private var foodParser
     @Environment(\.dismiss) private var dismiss
     @State private var query = ""
     @State private var model: FoodSearchModel?
@@ -44,7 +46,23 @@ struct FoodSearchView: View {
     private var content: some View {
         switch model?.state ?? .idle {
         case .idle:
-            ContentUnavailableView("Search for a food", systemImage: "magnifyingglass", description: Text("For example, \"apple\" or \"scrambled eggs\"."))
+            List {
+                Section {
+                    NavigationLink {
+                        DescribeMealView(meal: suggestedMeal, day: day) { dismiss() }
+                    } label: {
+                        Label("Describe your meal", systemImage: "sparkles")
+                    }
+                    .disabled(foodParser.availability != .available)
+                } footer: {
+                    Text(DescribeMealModel.message(for: foodParser.availability)
+                        ?? String(localized: "Type a whole meal, like \"two tacos and a soda\", and review the foods before adding them."))
+                }
+                Section {
+                    Text("Or search for one food above, in English: \"apple\" or \"scrambled eggs\".")
+                        .foregroundStyle(.secondary)
+                }
+            }
         case .loading:
             ProgressView()
         case .noResults:

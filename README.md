@@ -70,7 +70,15 @@ xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
   -parallel-testing-enabled NO
 ```
 
-The UI test launches the app with `-in-memory-store` and `-stub-search`, so it never touches your data or the network.
+The UI tests launch the app with `-in-memory-store`, `-stub-search` and `-stub-parser`, so they never touch your data, the network or the language model.
+
+```sh
+# Opt-in: describe a meal with the real on-device model and the real USDA API
+# (needs Apple Intelligence turned on on the Mac running the simulator)
+TEST_RUNNER_LIVE_UI_TESTS=1 xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
+  -destination 'platform=iOS Simulator,name=iPhone 18 Pro' \
+  -only-testing:DietappUITests/DietappUITests/testLiveDescribeMeal -parallel-testing-enabled NO
+```
 
 ## Roadmap
 
