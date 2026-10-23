@@ -7,6 +7,8 @@ import SwiftUI
 struct FoodSearchView: View {
     /// Preselected in the add screen, where the user can still change it.
     let suggestedMeal: MealType
+    /// The day the food is logged to.
+    let day: Date
 
     @Environment(\.nutritionSearch) private var nutritionSearch
     @Environment(\.dismiss) private var dismiss
@@ -23,7 +25,7 @@ struct FoodSearchView: View {
                     Button("Cancel", role: .cancel) { dismiss() }
                 }
                 .navigationDestination(for: Food.self) { food in
-                    AddFoodView(food: food, meal: suggestedMeal) { dismiss() }
+                    AddFoodView(food: food, meal: suggestedMeal, day: day) { dismiss() }
                 }
                 .task(id: query) {
                     await searchModel.search(for: query)
@@ -65,6 +67,6 @@ struct FoodSearchView: View {
 }
 
 #Preview {
-    FoodSearchView(suggestedMeal: .breakfast)
+    FoodSearchView(suggestedMeal: .breakfast, day: .now)
         .modelContainer(.preview(withSampleData: false))
 }

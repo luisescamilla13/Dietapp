@@ -4,29 +4,119 @@ import SwiftData
 import SwiftUI
 
 struct TodayView: View {
+    /// `nil` follows the clock, so the screen moves to the new day after midnight.
+    @State private var selectedDay: Date?
     @State private var addingTo: MealType?
     @State private var editingGoals = false
+    @State private var pickingDay = false
+
+    private let calendar = Calendar.current
+
+    private var day: Date { selectedDay ?? calendar.startOfDay(for: .now) }
+    private var isToday: Bool { calendar.isDateInToday(day) }
+
+    private var title: Text {
+        if isToday { return Text("Today") }
+        if calendar.isDateInYesterday(day) { return Text("Yesterday") }
+        return Text(day, format: .dateTime.weekday(.wide).month(.wide).day())
+    }
 
     var body: some View {
         NavigationStack {
-            // Recomputed on each render, so the list moves to the new day after midnight.
-            DayLogList(day: Calendar.current.startOfDay(for: .now), addingTo: $addingTo)
-                .navigationTitle("Today")
+            DayLogList(day: day, addingTo: $addingTo)
+                .id(day)
+                .navigationTitle(title)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button("Goals", systemImage: "target") { editingGoals = true }
                     }
-                    ToolbarItem(placement: .primaryAction) {
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Button("Choose day", systemImage: "calendar") { pickingDay = true }
                         Button("Add food", systemImage: "plus") {
                             addingTo = MealType.suggested(at: .now)
                         }
                     }
                 }
+                .safeAreaInset(edge: .top) {
+                    DaySwitcher(isToday: isToday) { move(byDays: $0) } goToToday: {
+                        selectedDay = nil
+                    }
+                }
                 .sheet(item: $addingTo) { meal in
-                    FoodSearchView(suggestedMeal: meal)
+                    FoodSearchView(suggestedMeal: meal, day: day)
                 }
                 .sheet(isPresented: $editingGoals) {
                     GoalsView()
+                }
+                .sheet(isPresented: $pickingDay) {
+                    DayPicker(day: day) { picked in
+                        select(picked)
+                        pickingDay = false
+                    }
+                    .presentationDetents([.medium])
+                }
+        }
+    }
+
+    private func move(byDays days: Int) {
+        guard let moved = calendar.date(byAdding: .day, value: days, to: day) else { return }
+        select(moved)
+    }
+
+    /// Future days are clamped to today, and today goes back to following the clock.
+    private func select(_ date: Date) {
+        let picked = calendar.startOfDay(for: date)
+        selectedDay = picked >= calendar.startOfDay(for: .now) ? nil : picked
+    }
+}
+
+/// Previous and next day buttons, plus a shortcut back to today.
+private struct DaySwitcher: View {
+    let isToday: Bool
+    let move: (Int) -> Void
+    let goToToday: () -> Void
+
+    var body: some View {
+        HStack {
+            Button("Previous day", systemImage: "chevron.left") { move(-1) }
+                .modifier(RoundIconButton())
+            Spacer()
+            if !isToday {
+                Button("Back to today", action: goToToday)
+                    .font(.subheadline)
+            }
+            Spacer()
+            Button("Next day", systemImage: "chevron.right") { move(1) }
+                .modifier(RoundIconButton())
+                .disabled(isToday)
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 4)
+    }
+}
+
+private struct RoundIconButton: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .labelStyle(.iconOnly)
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.circle)
+    }
+}
+
+private struct DayPicker: View {
+    @State var day: Date
+    let onPick: (Date) -> Void
+
+    var body: some View {
+        NavigationStack {
+            DatePicker("Day", selection: $day, in: ...Date.now, displayedComponents: .date)
+                .datePickerStyle(.graphical)
+                .padding()
+                .navigationTitle("Choose day")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    Button("Done") { onPick(day) }
                 }
         }
     }

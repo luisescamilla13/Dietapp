@@ -6,6 +6,7 @@ import SwiftUI
 /// Picks an amount of `food` and logs it.
 struct AddFoodView: View {
     let food: Food
+    let day: Date
     let onLogged: () -> Void
 
     @Environment(\.modelContext) private var context
@@ -20,8 +21,9 @@ struct AddFoodView: View {
         case portion(Portion)
     }
 
-    init(food: Food, meal: MealType, onLogged: @escaping () -> Void) {
+    init(food: Food, meal: MealType, day: Date, onLogged: @escaping () -> Void) {
         self.food = food
+        self.day = day
         self.onLogged = onLogged
         _meal = State(initialValue: meal)
         if let portion = food.portions.first {
@@ -82,7 +84,8 @@ struct AddFoodView: View {
 
     private func add() {
         do {
-            try FoodLog(context: context).log(food, grams: grams, portionName: portionName, to: meal)
+            let log = FoodLog(context: context)
+            try log.log(food, grams: grams, portionName: portionName, to: meal, at: log.loggingDate(for: day))
             onLogged()
         } catch {
             errorMessage = String(localized: "Couldn't save the food. Try again.")
@@ -108,7 +111,7 @@ struct NutrientsList: View {
 
 #Preview {
     NavigationStack {
-        AddFoodView(food: Food.samples[0], meal: .snack) {}
+        AddFoodView(food: Food.samples[0], meal: .snack, day: .now) {}
     }
     .modelContainer(.preview(withSampleData: false))
 }

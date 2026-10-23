@@ -46,6 +46,25 @@ final class DietappUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["0 kcal"].exists)
     }
 
+    @MainActor
+    func testLoggingToAnEarlierDay() throws {
+        let app = launchApp()
+
+        app.buttons["Previous day"].tap()
+        XCTAssertTrue(app.navigationBars["Yesterday"].waitForExistence(timeout: 5))
+        logSmallApple(in: app)
+        XCTAssertTrue(app.staticTexts["101 kcal"].exists)
+        attachScreenshot(of: app, named: "6-yesterday-logged")
+
+        app.buttons["Back to today"].tap()
+        XCTAssertTrue(app.navigationBars["Today"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["0 kcal"].exists)
+        XCTAssertFalse(app.staticTexts["Apple, raw"].exists)
+
+        app.tabBars.buttons["History"].tap()
+        XCTAssertTrue(app.staticTexts["Days logged, 1 of 7"].waitForExistence(timeout: 5))
+    }
+
     // MARK: - Helpers
 
     @MainActor

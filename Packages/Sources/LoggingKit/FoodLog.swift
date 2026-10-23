@@ -59,6 +59,17 @@ public final class FoodLog {
         return entry
     }
 
+    /// The time to stamp on a food logged to `day`: `now` for today, or the current
+    /// time of day on an earlier day, so entries keep a sensible order within it.
+    public func loggingDate(for day: Date, now: Date = .now) -> Date {
+        if calendar.isDate(day, inSameDayAs: now) { return now }
+        let time = calendar.dateComponents([.hour, .minute, .second], from: now)
+        return calendar.date(
+            bySettingHour: time.hour ?? 12, minute: time.minute ?? 0, second: time.second ?? 0,
+            of: calendar.startOfDay(for: day)
+        ) ?? calendar.startOfDay(for: day)
+    }
+
     public func delete(_ entry: FoodEntry) throws {
         context.delete(entry)
         try context.save()

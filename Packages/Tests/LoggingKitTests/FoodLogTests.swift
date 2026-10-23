@@ -78,6 +78,21 @@ struct FoodLogTests {
         #expect(totals.map(\.nutrients.calories) == [60, 0, 130])
     }
 
+    @Test func loggingTodayUsesTheCurrentTime() {
+        let now = date("2026-10-23 16:45")
+
+        #expect(log.loggingDate(for: date("2026-10-23 00:00"), now: now) == now)
+    }
+
+    @Test func loggingAnEarlierDayKeepsTheTimeOfDay() throws {
+        let stamped = log.loggingDate(for: date("2026-10-20 00:00"), now: date("2026-10-23 16:45"))
+        #expect(stamped == date("2026-10-20 16:45"))
+
+        try log.log(.apple, grams: 100, to: .snack, at: stamped)
+        #expect(try log.totals(on: date("2026-10-20 09:00")).calories == 60)
+        #expect(try log.totals(on: date("2026-10-23 09:00")).calories == 0)
+    }
+
     private func date(_ string: String) -> Date {
         let formatter = DateFormatter()
         formatter.calendar = calendar
