@@ -6,6 +6,13 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D28FDF91308BDF000005912D /* NutritionKit in Frameworks */ = {isa = PBXBuildFile; productRef = D28FDF81308BDF000005912D /* NutritionKit */; };
+		D28FDF92308BDF000005912D /* LoggingKit in Frameworks */ = {isa = PBXBuildFile; productRef = D28FDF82308BDF000005912D /* LoggingKit */; };
+		D28FDF93308BDF000005912D /* FoodParsingKit in Frameworks */ = {isa = PBXBuildFile; productRef = D28FDF83308BDF000005912D /* FoodParsingKit */; };
+		D28FDF94308BDF000005912D /* FoodVisionKit in Frameworks */ = {isa = PBXBuildFile; productRef = D28FDF84308BDF000005912D /* FoodVisionKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		D28FDF5D308BDEEE0005912D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -51,6 +58,10 @@
 		D28FDF4C308BDEED0005912D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				D28FDF91308BDF000005912D /* NutritionKit in Frameworks */,
+				D28FDF92308BDF000005912D /* LoggingKit in Frameworks */,
+				D28FDF93308BDF000005912D /* FoodParsingKit in Frameworks */,
+				D28FDF94308BDF000005912D /* FoodVisionKit in Frameworks */,
 			);
 		};
 		D28FDF59308BDEEE0005912D /* Frameworks */ = {
@@ -103,6 +114,12 @@
 				D28FDF51308BDEED0005912D /* Dietapp */,
 			);
 			name = Dietapp;
+			packageProductDependencies = (
+				D28FDF81308BDF000005912D /* NutritionKit */,
+				D28FDF82308BDF000005912D /* LoggingKit */,
+				D28FDF83308BDF000005912D /* FoodParsingKit */,
+				D28FDF84308BDF000005912D /* FoodVisionKit */,
+			);
 			productName = Dietapp;
 			productReference = D28FDF4F308BDEED0005912D /* Dietapp.app */;
 			productType = "com.apple.product-type.application";
@@ -181,6 +198,9 @@
 			);
 			mainGroup = D28FDF46308BDEED0005912D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D28FDF80308BDF000005912D /* XCLocalSwiftPackageReference "Packages" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D28FDF50308BDEED0005912D /* Products */;
 			projectDirPath = "";
@@ -296,7 +316,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -354,7 +374,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -391,7 +411,7 @@
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -423,7 +443,7 @@
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -436,7 +456,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = AVY37AZZC6;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gatoelectronico.DietappTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -444,7 +464,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dietapp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Dietapp";
 			};
@@ -458,7 +478,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = AVY37AZZC6;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gatoelectronico.DietappTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -466,7 +486,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dietapp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Dietapp";
 			};
@@ -486,7 +506,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Dietapp;
 			};
@@ -506,7 +526,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Dietapp;
 			};
@@ -548,6 +568,32 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		D28FDF80308BDF000005912D /* XCLocalSwiftPackageReference "Packages" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D28FDF81308BDF000005912D /* NutritionKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NutritionKit;
+		};
+		D28FDF82308BDF000005912D /* LoggingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LoggingKit;
+		};
+		D28FDF83308BDF000005912D /* FoodParsingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FoodParsingKit;
+		};
+		D28FDF84308BDF000005912D /* FoodVisionKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FoodVisionKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D28FDF47308BDEED0005912D /* Project object */;
 	validationLevel = 1;
