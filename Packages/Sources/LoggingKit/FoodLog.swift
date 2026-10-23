@@ -6,6 +6,23 @@ import SwiftData
 public struct DayTotal: Sendable, Hashable {
     public var day: Date
     public var nutrients: Nutrients
+
+    /// One total per day from `start` through `end`, including days with nothing logged.
+    /// Pure, so views can build it from `@Query` results and stay live.
+    public static func totals(for meals: [Meal], from start: Date, through end: Date, calendar: Calendar) -> [DayTotal] {
+        let first = calendar.startOfDay(for: start)
+        let last = calendar.startOfDay(for: end)
+        let byDay = Dictionary(grouping: meals, by: \.day).mapValues { $0.reduce(.zero) { $0 + $1.nutrients } }
+
+        var totals: [DayTotal] = []
+        var day = first
+        while day <= last {
+            totals.append(DayTotal(day: day, nutrients: byDay[day] ?? .zero))
+            guard let next = calendar.date(byAdding: .day, value: 1, to: day) else { break }
+            day = next
+        }
+        return totals
+    }
 }
 
 /// Reads and writes the food log. Main-actor bound because it shares the
@@ -60,21 +77,11 @@ public final class FoodLog {
         try meals(on: date).reduce(.zero) { $0 + $1.nutrients }
     }
 
-    /// One total per day from `start` through `end`, including days with nothing logged.
     public func dailyTotals(from start: Date, through end: Date) throws -> [DayTotal] {
         let first = calendar.startOfDay(for: start)
         let last = calendar.startOfDay(for: end)
         let meals = try context.fetch(FetchDescriptor<Meal>(predicate: #Predicate { $0.day >= first && $0.day <= last }))
-        let byDay = Dictionary(grouping: meals, by: \.day).mapValues { $0.reduce(.zero) { $0 + $1.nutrients } }
-
-        var totals: [DayTotal] = []
-        var day = first
-        while day <= last {
-            totals.append(DayTotal(day: day, nutrients: byDay[day] ?? .zero))
-            guard let next = calendar.date(byAdding: .day, value: 1, to: day) else { break }
-            day = next
-        }
-        return totals
+        return DayTotal.totals(for: meals, from: first, through: last, calendar: calendar)
     }
 
     private func meal(_ type: MealType, on date: Date) throws -> Meal? {

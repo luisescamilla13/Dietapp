@@ -63,12 +63,19 @@ USDA_API_KEY=your_key swift test
 # App tests on the simulator
 xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
   -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -only-testing:DietappTests
+
+# End-to-end UI test: search, log a food, check Today and History
+xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
+  -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -only-testing:DietappUITests \
+  -parallel-testing-enabled NO
 ```
+
+The UI test launches the app with `-in-memory-store` and `-stub-search`, so it never touches your data or the network.
 
 ## Roadmap
 
 - [x] **Phase 0:** project foundation, modules, CI
-- [ ] **Phase 1:** food logging MVP: USDA search, meals, daily totals, history charts
+- [x] **Phase 1:** food logging MVP: USDA search, meals, daily totals, history charts
 - [ ] **Phase 2:** barcode scanning with Open Food Facts
 - [ ] **Phase 3:** text and voice logging with on-device Foundation Models
 - [ ] **Phase 4:** food suggestions from a photo

@@ -1,43 +1,47 @@
-//
-//  DietappUITests.swift
-//  DietappUITests
-//
-//  Created by Kenzo on 23/10/26.
-//
-
 import XCTest
 
 final class DietappUITests: XCTestCase {
-
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
+    /// The Phase 1 goal: search "apple", log it, and see today's totals and the history update.
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testLoggingAFoodUpdatesTodayAndHistory() throws {
         let app = XCUIApplication()
+        app.launchArguments = ["-in-memory-store", "-stub-search"]
         app.launch()
+        attachScreenshot(of: app, named: "1-today-empty")
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // XCUIAutomation Documentation
-        // https://developer.apple.com/documentation/xcuiautomation
+        app.navigationBars.buttons["Add food"].tap()
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.tap()
+        search.typeText("apple")
+
+        let result = app.staticTexts["Apple, raw"]
+        XCTAssertTrue(result.waitForExistence(timeout: 5))
+        attachScreenshot(of: app, named: "2-search-results")
+        result.tap()
+
+        attachScreenshot(of: app, named: "3-add-food")
+        app.navigationBars.buttons["Add"].tap()
+
+        XCTAssertTrue(app.staticTexts["Apple, raw"].waitForExistence(timeout: 5))
+        // 1 small apple = 165 g × 61 kcal / 100 g ≈ 101 kcal.
+        XCTAssertTrue(app.staticTexts["101 kcal"].exists)
+        attachScreenshot(of: app, named: "4-today-logged")
+
+        app.tabBars.buttons["History"].tap()
+        XCTAssertTrue(app.staticTexts["Days logged, 1 of 7"].waitForExistence(timeout: 5))
+        attachScreenshot(of: app, named: "5-history")
     }
 
     @MainActor
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
+    private func attachScreenshot(of app: XCUIApplication, named name: String) {
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
     }
 }
