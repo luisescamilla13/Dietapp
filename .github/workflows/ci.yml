@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  packages:
+    name: Package tests (macOS)
+    runs-on: xcode-27
+    steps:
+      - uses: actions/checkout@v5
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "27.1"
+      - name: swift test
+        working-directory: Packages
+        run: swift test
+
+  app:
+    name: App build and tests (iOS Simulator)
+    runs-on: xcode-27
+    steps:
+      - uses: actions/checkout@v5
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "27.1"
+      - name: Pick an iPhone simulator
+        # Runner images change their simulators often, so pick one instead of hardcoding a name.
+        run: |
+          UDID=$(xcrun simctl list devices available --json \
+            | jq -r '[.devices | to_entries[] | select(.key | test("iOS-(2[6-9]|[3-9][0-9])")) | .value[] | select(.name | startswith("iPhone"))][0].udid')
+          if [ -z "$UDID" ] || [ "$UDID" = "null" ]; then
+            echo "No iPhone simulator with iOS 26+ found" >&2
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
+      - name: xcodebuild test
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project Dietapp.xcodeproj \
+            -scheme Dietapp \
+            -destination "id=$SIMULATOR_UDID" \
+            -only-testing:DietappTests \
+            CODE_SIGNING_ALLOWED=NO
