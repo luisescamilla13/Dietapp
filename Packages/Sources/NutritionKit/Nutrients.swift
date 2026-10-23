@@ -16,6 +16,16 @@ public struct Nutrients: Sendable, Hashable, Codable {
 
     public static let zero = Nutrients(calories: 0, protein: 0, carbohydrates: 0, fat: 0, fiber: 0)
 
+    public func scaled(by factor: Double) -> Nutrients {
+        Nutrients(
+            calories: calories * factor,
+            protein: protein * factor,
+            carbohydrates: carbohydrates * factor,
+            fat: fat * factor,
+            fiber: fiber * factor
+        )
+    }
+
     public static func + (lhs: Nutrients, rhs: Nutrients) -> Nutrients {
         Nutrients(
             calories: lhs.calories + rhs.calories,

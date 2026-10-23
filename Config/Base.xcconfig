@@ -1,0 +1,7 @@
+// Build settings for the Dietapp app target.
+// Real keys go in Config/Secrets.xcconfig, which is ignored by git.
+// See Config/Secrets.example.xcconfig.
+
+USDA_API_KEY = DEMO_KEY
+
+#include? "Secrets.xcconfig"
