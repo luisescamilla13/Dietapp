@@ -21,6 +21,9 @@ struct FoundationModelsFoodParserTests {
         Case(description: "3 tortillas de maíz con frijoles", expected: [("tortilla", 3), ("bean", 1)]),
         Case(description: "una manzana y medio plátano", expected: [("apple", 1), ("banana", 0.5)]),
         Case(description: "chilaquiles verdes", expected: [("chilaquiles", 1)]),
+        // Without accents too, as people often type them.
+        Case(description: "Dos huevos revueltos con jamon y cafe con leche", expected: [("egg", 2), ("ham", 1), ("coffee", 1)]),
+        Case(description: "dos huevos revueltos con jamón y café con leche", expected: [("egg", 2), ("ham", 1), ("coffee", 1)]),
     ]
 
     let parser = FoundationModelsFoodParser()
