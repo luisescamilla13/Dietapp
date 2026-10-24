@@ -58,7 +58,8 @@ public struct FoundationModelsFoodParser: FoodParsing {
         - Make one item per distinct food or drink. A prepared dish such as "chilaquiles" \
         or "taco al pastor" is one item, not its ingredients. A drink with an add-in, \
         such as "café con leche", is one item.
-        - First copy the exact words for the item without translating them, then read the quantity from those words: \
+        - First copy the words for the item exactly as the person wrote them, in their language. \
+        If they wrote in Spanish, the copied words are in Spanish. Then read the quantity from those words: \
         "two" or "dos" is 2, "3" is 3, "half" or "medio" is 0.5. Use 1 only when no amount is said.
         - Write the search term as the food's generic name in English, without brands: \
         "coca" is "cola soft drink" and "taco al pastor" is "pork taco". A dish that is also \
@@ -105,10 +106,10 @@ struct GeneratedMeal {
 // copying the words first lets the model read the quantity from them.
 @Generable
 struct GeneratedItem {
-    @Guide(description: "The exact words from the description for this item, such as 'two scrambled eggs' or 'medio plátano'")
+    @Guide(description: "The words for this item copied from the description in its original language, never translated")
     var words: String
 
-    @Guide(description: "The amount in those words: two or dos is 2, half or medio is 0.5; 1 if no amount is said", .range(0.1...100))
+    @Guide(description: "The amount in those words as a number; 1 if no amount is said", .range(0.1...100))
     var quantity: Double
 
     @Guide(description: "The unit in English, such as piece, cup, bowl, slice, can, glass, gram or tablespoon")

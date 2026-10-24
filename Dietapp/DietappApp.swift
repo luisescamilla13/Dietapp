@@ -1,3 +1,4 @@
+import FoodParsingKit
 import LoggingKit
 import NutritionKit
 import SwiftData
@@ -7,6 +8,7 @@ import SwiftUI
 struct DietappApp: App {
     private let container: ModelContainer
     private let nutritionSearch: any NutritionSearching
+    private let foodParser: any FoodParsing
     @State private var goals = GoalsSettings()
 
     init() {
@@ -16,6 +18,9 @@ struct DietappApp: App {
         nutritionSearch = arguments.contains("-stub-search")
             ? StubNutritionSearch()
             : USDAClient(apiKey: AppConfiguration.usdaAPIKey)
+        foodParser = arguments.contains("-stub-parser")
+            ? StubFoodParser()
+            : FoundationModelsFoodParser()
         do {
             container = try FoodLog.makeContainer(inMemory: arguments.contains("-in-memory-store"))
         } catch {
@@ -27,6 +32,7 @@ struct DietappApp: App {
         WindowGroup {
             RootView()
                 .environment(\.nutritionSearch, nutritionSearch)
+                .environment(\.foodParser, foodParser)
                 .environment(goals)
         }
         .modelContainer(container)

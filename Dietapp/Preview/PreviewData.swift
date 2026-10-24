@@ -7,8 +7,11 @@ import SwiftData
 nonisolated struct StubNutritionSearch: NutritionSearching {
     var foods: [Food] = Food.samples
 
+    /// Matches foods whose name contains any word of three letters or more, so
+    /// "pork taco" finds "Taco, NFS" like a real database would.
     func searchFoods(matching query: String) async throws -> [Food] {
-        foods.filter { $0.name.localizedCaseInsensitiveContains(query) }
+        let words = query.split(separator: " ").map(String.init).filter { $0.count >= 3 }
+        return foods.filter { food in words.contains { food.name.localizedCaseInsensitiveContains($0) } }
     }
 }
 
@@ -28,6 +31,11 @@ extension Food {
             source: .usda, sourceID: "2708514", name: "Taco, NFS",
             nutrientsPer100g: Nutrients(calories: 246, protein: 15.3, carbohydrates: 15.6, fat: 13.6, fiber: 2.2),
             portions: [Portion(name: "1 taco", grams: 78)]
+        ),
+        Food(
+            source: .usda, sourceID: "2710276", name: "Soft drink, cola",
+            nutrientsPer100g: Nutrients(calories: 42, protein: 0, carbohydrates: 10.4, fat: 0, fiber: 0),
+            portions: [Portion(name: "1 can (12 fl oz)", grams: 372)]
         ),
     ]
 }
