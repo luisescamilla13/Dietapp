@@ -19,12 +19,14 @@ let package = Package(
         .library(name: "LoggingKit", targets: ["LoggingKit"]),
         .library(name: "FoodParsingKit", targets: ["FoodParsingKit"]),
         .library(name: "FoodVisionKit", targets: ["FoodVisionKit"]),
+        .library(name: "DictationKit", targets: ["DictationKit"]),
     ],
     targets: [
         .target(name: "NutritionKit", swiftSettings: swiftSettings),
         .target(name: "LoggingKit", dependencies: ["NutritionKit"], swiftSettings: swiftSettings),
         .target(name: "FoodParsingKit", swiftSettings: swiftSettings),
         .target(name: "FoodVisionKit", swiftSettings: swiftSettings),
+        .target(name: "DictationKit", swiftSettings: swiftSettings),
 
         .testTarget(
             name: "NutritionKitTests",
@@ -35,5 +37,6 @@ let package = Package(
         .testTarget(name: "LoggingKitTests", dependencies: ["LoggingKit"], swiftSettings: swiftSettings),
         .testTarget(name: "FoodParsingKitTests", dependencies: ["FoodParsingKit"], swiftSettings: swiftSettings),
         .testTarget(name: "FoodVisionKitTests", dependencies: ["FoodVisionKit"], swiftSettings: swiftSettings),
+        .testTarget(name: "DictationKitTests", dependencies: ["DictationKit"], swiftSettings: swiftSettings),
     ]
 )

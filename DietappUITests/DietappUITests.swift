@@ -93,6 +93,29 @@ final class DietappUITests: XCTestCase {
         attachScreenshot(of: app, named: "8-describe-logged")
     }
 
+    /// Dictating fills in the description; the stub types "dos tacos al pastor y una coca".
+    @MainActor
+    func testDictatingAMeal() throws {
+        let app = launchApp()
+
+        app.navigationBars.buttons["Add food"].tap()
+        app.buttons["Describe your meal"].tap()
+        let dictate = app.buttons["dictation-toggle"]
+        XCTAssertTrue(dictate.waitForExistence(timeout: 5))
+        dictate.tap()
+
+        let field = app.textFields.firstMatch
+        let filledIn = NSPredicate(format: "value == %@", "dos tacos al pastor y una coca")
+        wait(for: [expectation(for: filledIn, evaluatedWith: field)], timeout: 5)
+        attachScreenshot(of: app, named: "9-dictated")
+        app.buttons["Find foods"].tap()
+
+        let add = app.navigationBars.buttons["Add"]
+        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        add.tap()
+        XCTAssertTrue(app.staticTexts["599 kcal"].waitForExistence(timeout: 5))
+    }
+
     /// The same flow with the real on-device model and the real USDA API. Opt-in, since it
     /// needs Apple Intelligence on the Mac and network access:
     /// `TEST_RUNNER_LIVE_UI_TESTS=1 xcodebuild test -only-testing:DietappUITests/DietappUITests/testLiveDescribeMeal …`
@@ -120,7 +143,7 @@ final class DietappUITests: XCTestCase {
     @MainActor
     private func launchApp() -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-in-memory-store", "-stub-search", "-stub-parser"]
+        app.launchArguments = ["-in-memory-store", "-stub-search", "-stub-parser", "-stub-dictation"]
         app.launch()
         return app
     }
