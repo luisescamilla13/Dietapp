@@ -13,7 +13,7 @@ build/
 Packages/.build/
 Packages/.swiftpm/
 
-# Secrets: copy Config/Secrets.example.xcconfig to Config/Secrets.xcconfig
+# Secrets. The app no longer reads any, but older checkouts may still hold a USDA key here.
 Config/Secrets.xcconfig
 
 # Personal planning notes (kept local)

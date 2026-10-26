@@ -45,16 +45,9 @@ final class FoodSearchModel {
         }
     }
 
+    // The bundled database fails only if the app itself is broken, so there is
+    // nothing more specific to tell the user.
     private static func message(for error: any Error) -> String {
-        switch error {
-        case USDAClientError.invalidAPIKey:
-            String(localized: "The USDA API key is invalid. Check Config/Secrets.xcconfig.")
-        case USDAClientError.rateLimited:
-            String(localized: "Too many searches for now. Try again in a few minutes.")
-        case let error as URLError where error.code == .notConnectedToInternet:
-            String(localized: "You're offline. Connect to the internet to search foods.")
-        default:
-            String(localized: "Search failed. Try again.")
-        }
+        String(localized: "Search failed. Try again.")
     }
 }

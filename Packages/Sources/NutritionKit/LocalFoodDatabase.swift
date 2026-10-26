@@ -37,28 +37,46 @@ public actor LocalFoodDatabase: NutritionSearching {
     }
 
     public func searchFoods(matching query: String) async throws -> [Food] {
-        let terms = SearchRanking.terms(in: query)
-        guard !terms.isEmpty else { return [] }
+        var query = SearchQuery(query)
+        guard !query.isEmpty else { return [] }
 
-        let ranked = SearchRanking.rank(try candidates(matching: terms), for: terms).prefix(resultLimit)
+        var candidates = try candidates(matching: query)
+        // A word the database doesn't know, as in "chilaquiles verdes", rules out every
+        // food. Names start with the food itself, so drop words from the end.
+        while candidates.isEmpty, query.terms.count > 1 {
+            query.terms.removeLast()
+            candidates = try self.candidates(matching: query)
+        }
+        let ranked = SearchRanking.rank(candidates, for: query.words).prefix(resultLimit)
         let foods = try foods(withIDs: ranked.map(\.id))
         return ranked.compactMap { foods[$0.id] }
     }
 
-    /// Foods whose names contain every term as a word prefix, by text score and priority.
-    private func candidates(matching terms: [String]) throws -> [SearchRanking.Candidate] {
-        // Each term is quoted, so FTS5 syntax in the query ("AND", "*") is just text.
-        let match = terms.map { "\"\($0)\"*" }.joined(separator: " ")
+    /// Foods whose names match every term of the query, by text score and priority.
+    private func candidates(matching query: SearchQuery) throws -> [SearchRanking.Candidate] {
         let sql = """
-            SELECT foods.id, foods.name, bm25(foods_search) + foods.priority AS score
+            SELECT foods.id, foods.name, bm25(foods_search), foods.priority
             FROM foods_search JOIN foods ON foods.id = foods_search.rowid
             WHERE foods_search MATCH ?
-            ORDER BY score
+            ORDER BY bm25(foods_search) + foods.priority
             LIMIT 60
             """
-        return try rows(sql, bindings: [match]) { statement in
-            SearchRanking.Candidate(id: sqlite3_column_int64(statement, 0), name: text(statement, 1), baseScore: sqlite3_column_double(statement, 2))
+        var best: [Int64: SearchRanking.Candidate] = [:]
+        for expression in query.matchExpressions {
+            let matches = try rows(sql, bindings: [expression]) { statement in
+                (id: sqlite3_column_int64(statement, 0), name: text(statement, 1), textScore: sqlite3_column_double(statement, 2), priority: sqlite3_column_double(statement, 3))
+            }
+            // Text scores are relative to the best match of the same expression, so
+            // Spanish and English matches compete on priority and ranking alone.
+            let bestTextScore = matches.map(\.textScore).min() ?? 0
+            for match in matches {
+                let candidate = SearchRanking.Candidate(id: match.id, name: match.name, baseScore: match.textScore - bestTextScore + match.priority)
+                if best[match.id].map({ candidate.baseScore < $0.baseScore }) ?? true {
+                    best[match.id] = candidate
+                }
+            }
         }
+        return Array(best.values)
     }
 
     private func foods(withIDs ids: [Int64]) throws -> [Int64: Food] {

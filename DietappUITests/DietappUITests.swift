@@ -116,8 +116,22 @@ final class DietappUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["599 kcal"].waitForExistence(timeout: 5))
     }
 
-    /// The same flow with the real on-device model and the real USDA API. Opt-in, since it
-    /// needs Apple Intelligence on the Mac and network access:
+    /// Searches the real bundled database in Spanish. Offline, so it runs with the others.
+    @MainActor
+    func testSearchingInSpanish() throws {
+        let app = launchApp(stubbingSearch: false)
+        app.navigationBars.buttons["Add food"].tap()
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.tap()
+        search.typeText("frijoles refritos")
+
+        XCTAssertTrue(app.staticTexts["Refried beans"].waitForExistence(timeout: 5))
+        attachScreenshot(of: app, named: "10-spanish-search")
+    }
+
+    /// The same flow with the real on-device model and the bundled food database. Opt-in,
+    /// since it needs Apple Intelligence on the Mac:
     /// `TEST_RUNNER_LIVE_UI_TESTS=1 xcodebuild test -only-testing:DietappUITests/DietappUITests/testLiveDescribeMeal …`
     @MainActor
     func testLiveDescribeMeal() throws {
@@ -141,9 +155,10 @@ final class DietappUITests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func launchApp() -> XCUIApplication {
+    private func launchApp(stubbingSearch: Bool = true) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-in-memory-store", "-stub-search", "-stub-parser", "-stub-dictation", "-stub-recognizer"]
+        app.launchArguments = ["-in-memory-store", "-stub-parser", "-stub-dictation", "-stub-recognizer"]
+            + (stubbingSearch ? ["-stub-search"] : [])
         app.launch()
         return app
     }

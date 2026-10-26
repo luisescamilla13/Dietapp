@@ -129,6 +129,8 @@ def priority(name, data_type):
         penalty += 3  # A restaurant or brand: "DENNY'S, french fries".
     if "abyfood" in name:
         penalty += 2
+    if re.search(r"\b(meatless|imitation)\b", name):
+        penalty += 1.5  # "Chicken, meatless" is not what "chicken" means.
     if re.search(r"\bNFS\b", name):
         penalty -= 0.6  # "Not further specified", the generic version.
     if re.search(r"\braw\b", name):

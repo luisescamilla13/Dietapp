@@ -35,25 +35,11 @@
 		D28FDF4F308BDEED0005912D /* Dietapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dietapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28FDF5C308BDEEE0005912D /* DietappTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DietappTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28FDF66308BDEEF0005912D /* DietappUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DietappUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D28FDFA0308BDF000005912D /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		D28FDFA2308BDF000005912D /* Exceptions for "Dietapp" folder in "Dietapp" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = D28FDF4E308BDEED0005912D /* Dietapp */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D28FDF51308BDEED0005912D /* Dietapp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				D28FDFA2308BDF000005912D /* Exceptions for "Dietapp" folder in "Dietapp" target */,
-			);
 			path = Dietapp;
 			sourceTree = "<group>";
 		};
@@ -96,7 +82,6 @@
 		D28FDF46308BDEED0005912D = {
 			isa = PBXGroup;
 			children = (
-				D28FDFA1308BDF000005912D /* Config */,
 				D28FDF51308BDEED0005912D /* Dietapp */,
 				D28FDF5F308BDEEE0005912D /* DietappTests */,
 				D28FDF69308BDEEF0005912D /* DietappUITests */,
@@ -112,14 +97,6 @@
 				D28FDF66308BDEEF0005912D /* DietappUITests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		D28FDFA1308BDF000005912D /* Config */ = {
-			isa = PBXGroup;
-			children = (
-				D28FDFA0308BDF000005912D /* Base.xcconfig */,
-			);
-			path = Config;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -412,7 +389,6 @@
 		};
 		D28FDF6F308BDEEF0005912D /* Debug configuration for PBXNativeTarget "Dietapp" */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D28FDFA0308BDF000005912D /* Base.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -421,7 +397,6 @@
 				DEVELOPMENT_TEAM = AVY37AZZC6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Dietapp/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Dietapp looks at a photo of your plate to suggest foods. The photo stays on your device.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Dietapp listens while you dictate a meal. Your speech is transcribed on your device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -448,7 +423,6 @@
 		};
 		D28FDF70308BDEEF0005912D /* Release configuration for PBXNativeTarget "Dietapp" */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D28FDFA0308BDF000005912D /* Base.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -457,7 +431,6 @@
 				DEVELOPMENT_TEAM = AVY37AZZC6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Dietapp/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Dietapp looks at a photo of your plate to suggest foods. The photo stays on your device.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Dietapp listens while you dictate a meal. Your speech is transcribed on your device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

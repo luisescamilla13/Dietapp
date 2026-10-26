@@ -20,7 +20,6 @@ struct DietappApp: App {
         // real data or the network.
         let arguments = ProcessInfo.processInfo.arguments
         do {
-            // The bundled database works offline, unlike the USDA API it replaces.
             nutritionSearch = arguments.contains("-stub-search")
                 ? StubNutritionSearch()
                 : try LocalFoodDatabase()
