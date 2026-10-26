@@ -72,7 +72,7 @@ xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
   -parallel-testing-enabled NO
 ```
 
-The UI tests launch the app with `-in-memory-store`, `-stub-search`, `-stub-parser` and `-stub-dictation`, so they never touch your data, the network, the language model or the microphone.
+The UI tests launch the app with `-in-memory-store`, `-stub-search`, `-stub-parser`, `-stub-dictation` and `-stub-recognizer`, so they never touch your data, the network, the language model or the microphone. The photo flow has no UI test: the system photo picker runs in its own process, out of reach of UI tests.
 
 ```sh
 # Opt-in: describe a meal with the real on-device model and the real USDA API
@@ -88,7 +88,7 @@ TEST_RUNNER_LIVE_UI_TESTS=1 xcodebuild test -project Dietapp.xcodeproj -scheme D
 - [x] **Phase 1:** food logging MVP: USDA search, meals, daily totals, history charts
 - [ ] **Phase 2:** barcode scanning with Open Food Facts
 - [x] **Phase 3:** text and voice logging with on-device Foundation Models
-- [ ] **Phase 4:** food suggestions from a photo
+- [x] **Phase 4:** food suggestions from a photo
 - [ ] **Phase 5:** quality: test coverage, accessibility, Spanish and English localization
 - [ ] **Phase 6:** open-source verification harness that lets AI coding agents drive the app
 

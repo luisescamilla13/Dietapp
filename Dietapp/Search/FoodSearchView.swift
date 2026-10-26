@@ -1,4 +1,5 @@
 import FoodParsingKit
+import FoodVisionKit
 import LoggingKit
 import NutritionKit
 import SwiftData
@@ -57,6 +58,9 @@ struct FoodSearchView: View {
                 } footer: {
                     Text(DescribeMealModel.message(for: foodParser.availability)
                         ?? String(localized: "Type a whole meal, like \"two tacos and a soda\", and review the foods before adding them."))
+                }
+                PhotoSuggestionsSection { suggestion in
+                    query = suggestion.searchTerm
                 }
                 Section {
                     Text("Or search for one food above, in English: \"apple\" or \"scrambled eggs\".")

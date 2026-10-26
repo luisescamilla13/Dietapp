@@ -1,5 +1,6 @@
 import DictationKit
 import FoodParsingKit
+import FoodVisionKit
 import NutritionKit
 import SwiftUI
 
@@ -8,4 +9,5 @@ extension EnvironmentValues {
     @Entry var nutritionSearch: any NutritionSearching = StubNutritionSearch()
     @Entry var foodParser: any FoodParsing = StubFoodParser()
     @Entry var dictation: any Dictating = StubDictation()
+    @Entry var foodRecognizer: any FoodRecognizing = StubFoodRecognizer()
 }

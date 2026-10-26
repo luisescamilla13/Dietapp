@@ -10,6 +10,11 @@ public struct VisionFoodRecognizer: FoodRecognizing {
         guard let source = CGImageSourceCreateWithData(imageData as CFData, nil), CGImageSourceGetType(source) != nil else {
             throw FoodRecognitionError.unreadableImage
         }
+        #if targetEnvironment(simulator)
+        // The simulator can't run the classifier: on its GPU it fails to load, and on its
+        // CPU it returns nonsense ("night_sky" for a pizza). macOS and devices are fine.
+        throw FoodRecognitionError.unavailable
+        #else
         let observations: [ClassificationObservation]
         do {
             observations = try await ClassifyImageRequest().perform(on: imageData)
@@ -17,6 +22,7 @@ public struct VisionFoodRecognizer: FoodRecognizing {
             throw FoodRecognitionError.failed
         }
         return Self.suggestions(from: observations.map { ($0.identifier, Double($0.confidence)) })
+        #endif
     }
 
     /// Labels under this confidence are mostly noise, like "strawberry" on a pizza.

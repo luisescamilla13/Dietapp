@@ -3,13 +3,16 @@ import Foundation
 /// Returns fixed suggestions, for previews, UI tests and the simulator.
 public struct StubFoodRecognizer: FoodRecognizing {
     public var result: [FoodSuggestion]
+    public var error: FoodRecognitionError?
 
-    public init(result: [FoodSuggestion] = StubFoodRecognizer.sampleSuggestions) {
+    public init(result: [FoodSuggestion] = StubFoodRecognizer.sampleSuggestions, error: FoodRecognitionError? = nil) {
         self.result = result
+        self.error = error
     }
 
     public func suggestions(for imageData: Data) async throws -> [FoodSuggestion] {
-        result
+        if let error { throw error }
+        return result
     }
 
     public static let sampleSuggestions = [

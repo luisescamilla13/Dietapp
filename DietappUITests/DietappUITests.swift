@@ -143,7 +143,7 @@ final class DietappUITests: XCTestCase {
     @MainActor
     private func launchApp() -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-in-memory-store", "-stub-search", "-stub-parser", "-stub-dictation"]
+        app.launchArguments = ["-in-memory-store", "-stub-search", "-stub-parser", "-stub-dictation", "-stub-recognizer"]
         app.launch()
         return app
     }
