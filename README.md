@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/luisescamilla13/Dietapp/actions/workflows/ci.yml/badge.svg)](https://github.com/luisescamilla13/Dietapp/actions/workflows/ci.yml)
 
-A free, open-source iOS food logging app that uses Apple's **on-device** AI. Describe a meal by text or voice ("two scrambled eggs and a coffee with milk"), scan a barcode, or snap a photo of your plate, and Dietapp turns it into a meal entry with its nutrients. No account, no server, and your data never leaves your phone (except for nutrition lookups to USDA and Open Food Facts).
+A free, open-source iOS food logging app that uses Apple's **on-device** AI. Describe a meal by text or voice ("two scrambled eggs and a coffee with milk"), scan a barcode, or snap a photo of your plate, and Dietapp turns it into a meal entry with its nutrients. No account, no server, and your data never leaves your phone. Food search runs on a database bundled with the app, so it works offline.
 
 > **Status:** early development. The project foundation is in place, and features land phase by phase (see [Roadmap](#roadmap)).
 
@@ -18,7 +18,7 @@ A free, open-source iOS food logging app that uses Apple's **on-device** AI. Des
 | Image AI | Vision, optionally a Core ML Food-101 model |
 | Voice | `SpeechAnalyzer` |
 | Barcodes | VisionKit `DataScannerViewController` |
-| Nutrition data | USDA FoodData Central, Open Food Facts |
+| Nutrition data | USDA FoodData Central, bundled as SQLite with full-text search (FTS5) |
 | Tests | Swift Testing, XCUITest, Maestro |
 | CI | GitHub Actions |
 
@@ -28,7 +28,7 @@ The app target is a thin SwiftUI layer. The logic lives in a local Swift package
 
 | Module | Responsibility |
 |---|---|
-| `NutritionKit` | Domain models (`Food`, `Nutrients`) and the USDA / Open Food Facts clients |
+| `NutritionKit` | Domain models (`Food`, `Nutrients`), the bundled food database and the USDA API client |
 | `LoggingKit` | Meals and daily totals with SwiftData. Depends on `NutritionKit` |
 | `FoodParsingKit` | Natural language → structured food items with Foundation Models |
 | `FoodVisionKit` | Photo → food suggestions with Vision's on-device image classifier |
@@ -39,18 +39,27 @@ Each module exposes protocols with mock implementations, which the tests and Swi
 ## Requirements
 
 - Xcode 27 or later
-- iOS 26 or later (Foundation Models features require an Apple Intelligence–capable device with Apple Intelligence turned on. Without it, the app falls back to manual search and barcodes.)
+- iOS 26 or later (Foundation Models features require an Apple Intelligence–capable device with Apple Intelligence turned on. Without it, the app falls back to manual search.)
 
 ## Getting started
 
 ```sh
 git clone https://github.com/luisescamilla13/Dietapp.git
 cd Dietapp
-cp Config/Secrets.example.xcconfig Config/Secrets.xcconfig   # optional: add your USDA API key
 open Dietapp.xcodeproj
 ```
 
-You can get a free USDA API key at [fdc.nal.usda.gov](https://fdc.nal.usda.gov/api-key-signup). Without one, the app uses USDA's rate-limited `DEMO_KEY`. Note that the key ends up inside the app binary: keeping it out of the repo prevents leaks through git, but it does not make the key secret.
+The app needs no API key: foods come from the bundled database.
+
+### Food database
+
+`Packages/Sources/NutritionKit/Resources/foods.sqlite` holds about 13,600 generic foods from [USDA FoodData Central](https://fdc.nal.usda.gov) (public domain): the Survey (FNDDS), Foundation and SR Legacy datasets, with nutrients per 100 g and household portions. Food IDs match the USDA API, so `usda:2708514` is "Taco, NFS" in both. To rebuild it, for example after a new USDA release:
+
+```sh
+python3 Tools/build_food_database.py   # standard library only; caches downloads in Tools/.cache
+```
+
+Search uses SQLite's FTS5 for candidates, then ranks them in Swift (`SearchRanking`), so "egg" finds "Egg, whole, raw" before "Eggnog".
 
 Running the tests:
 
@@ -59,7 +68,7 @@ Running the tests:
 # and speech tests run only where Apple Intelligence and the speech models are installed.
 cd Packages && swift test
 
-# Also run the tests that call the real USDA API
+# Also run the tests that call the real USDA API (needs a free key from fdc.nal.usda.gov)
 USDA_API_KEY=your_key swift test
 
 # App tests on the simulator
@@ -75,7 +84,7 @@ xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
 The UI tests launch the app with `-in-memory-store`, `-stub-search`, `-stub-parser`, `-stub-dictation` and `-stub-recognizer`, so they never touch your data, the network, the language model or the microphone. The photo flow has no UI test: the system photo picker runs in its own process, out of reach of UI tests.
 
 ```sh
-# Opt-in: describe a meal with the real on-device model and the real USDA API
+# Opt-in: describe a meal with the real on-device model and the bundled food database
 # (needs Apple Intelligence turned on on the Mac running the simulator)
 TEST_RUNNER_LIVE_UI_TESTS=1 xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
   -destination 'platform=iOS Simulator,name=iPhone 18 Pro' \
