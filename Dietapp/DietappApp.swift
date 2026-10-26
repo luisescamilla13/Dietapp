@@ -1,5 +1,6 @@
 import DictationKit
 import FoodParsingKit
+import FoodVisionKit
 import LoggingKit
 import NutritionKit
 import SwiftData
@@ -11,6 +12,7 @@ struct DietappApp: App {
     private let nutritionSearch: any NutritionSearching
     private let foodParser: any FoodParsing
     private let dictation: any Dictating
+    private let foodRecognizer: any FoodRecognizing
     @State private var goals = GoalsSettings()
 
     init() {
@@ -26,6 +28,9 @@ struct DietappApp: App {
         dictation = arguments.contains("-stub-dictation")
             ? StubDictation()
             : SpeechAnalyzerDictation()
+        foodRecognizer = arguments.contains("-stub-recognizer")
+            ? StubFoodRecognizer()
+            : VisionFoodRecognizer()
         do {
             container = try FoodLog.makeContainer(inMemory: arguments.contains("-in-memory-store"))
         } catch {
@@ -39,6 +44,7 @@ struct DietappApp: App {
                 .environment(\.nutritionSearch, nutritionSearch)
                 .environment(\.foodParser, foodParser)
                 .environment(\.dictation, dictation)
+                .environment(\.foodRecognizer, foodRecognizer)
                 .environment(goals)
         }
         .modelContainer(container)
