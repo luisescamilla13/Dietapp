@@ -22,7 +22,7 @@ let package = Package(
         .library(name: "DictationKit", targets: ["DictationKit"]),
     ],
     targets: [
-        .target(name: "NutritionKit", swiftSettings: swiftSettings),
+        .target(name: "NutritionKit", resources: [.copy("Resources/foods.sqlite")], swiftSettings: swiftSettings),
         .target(name: "LoggingKit", dependencies: ["NutritionKit"], swiftSettings: swiftSettings),
         .target(name: "FoodParsingKit", swiftSettings: swiftSettings),
         .target(name: "FoodVisionKit", swiftSettings: swiftSettings),

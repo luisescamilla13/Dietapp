@@ -19,9 +19,14 @@ struct DietappApp: App {
         // Launch arguments let UI tests and the agent harness run without touching
         // real data or the network.
         let arguments = ProcessInfo.processInfo.arguments
-        nutritionSearch = arguments.contains("-stub-search")
-            ? StubNutritionSearch()
-            : USDAClient(apiKey: AppConfiguration.usdaAPIKey)
+        do {
+            // The bundled database works offline, unlike the USDA API it replaces.
+            nutritionSearch = arguments.contains("-stub-search")
+                ? StubNutritionSearch()
+                : try LocalFoodDatabase()
+        } catch {
+            fatalError("Could not open the bundled food database: \(error)")
+        }
         foodParser = arguments.contains("-stub-parser")
             ? StubFoodParser()
             : FoundationModelsFoodParser()
