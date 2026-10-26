@@ -31,7 +31,7 @@ The app target is a thin SwiftUI layer. The logic lives in a local Swift package
 | `NutritionKit` | Domain models (`Food`, `Nutrients`) and the USDA / Open Food Facts clients |
 | `LoggingKit` | Meals and daily totals with SwiftData. Depends on `NutritionKit` |
 | `FoodParsingKit` | Natural language → structured food items with Foundation Models |
-| `FoodVisionKit` | Photo → food suggestions with Vision / Core ML |
+| `FoodVisionKit` | Photo → food suggestions with Vision's on-device image classifier |
 | `DictationKit` | Speech → text on device with `SpeechAnalyzer`, in English or Spanish |
 
 Each module exposes protocols with mock implementations, which the tests and SwiftUI previews use. The packages also build for macOS, so their tests run with `swift test` in seconds, without a simulator.
