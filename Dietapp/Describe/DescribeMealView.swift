@@ -1,18 +1,23 @@
+import DictationKit
 import FoodParsingKit
 import LoggingKit
 import NutritionKit
 import SwiftData
 import SwiftUI
 
-/// Turns a typed meal description into foods the user confirms before logging.
+/// Turns a typed or dictated meal description into foods the user confirms before logging.
 struct DescribeMealView: View {
     let day: Date
     let onLogged: () -> Void
 
     @Environment(\.foodParser) private var foodParser
     @Environment(\.nutritionSearch) private var nutritionSearch
+    @Environment(\.dictation) private var dictation
     @Environment(\.modelContext) private var context
     @State private var model: DescribeMealModel?
+    @State private var dictationModel: DictationModel?
+    @State private var isDictating = false
+    @AppStorage("dictationLanguage") private var language = DictationLanguage(matching: .current)
     @State private var description = ""
     @State private var meal: MealType
     @State private var errorMessage: String?
@@ -26,8 +31,8 @@ struct DescribeMealView: View {
 
     var body: some View {
         Group {
-            if let model {
-                content(model)
+            if let model, let dictationModel {
+                content(model, dictationModel: dictationModel)
             } else {
                 // A placeholder, because an empty view never appears and its `.task` wouldn't run.
                 ProgressView()
@@ -40,15 +45,22 @@ struct DescribeMealView: View {
         .task {
             guard model == nil else { return }
             model = DescribeMealModel(parser: foodParser, search: nutritionSearch)
+            dictationModel = DictationModel(dictation: dictation)
             isEditing = true
+        }
+        // Turning `isDictating` off cancels this task, which stops the microphone.
+        .task(id: isDictating) {
+            guard isDictating, let dictationModel else { return }
+            await dictationModel.listen(in: language, after: description) { description = $0 }
+            isDictating = false
         }
     }
 
-    private func content(_ model: DescribeMealModel) -> some View {
+    private func content(_ model: DescribeMealModel, dictationModel: DictationModel) -> some View {
         Form {
             switch model.phase {
             case .idle, .failed:
-                descriptionInput(model)
+                descriptionInput(model, dictationModel: dictationModel)
             case .parsing, .matching:
                 progress(model)
             case .review:
@@ -66,13 +78,26 @@ struct DescribeMealView: View {
     }
 
     @ViewBuilder
-    private func descriptionInput(_ model: DescribeMealModel) -> some View {
+    private func descriptionInput(_ model: DescribeMealModel, dictationModel: DictationModel) -> some View {
         Section {
             TextField("Two scrambled eggs and a coffee with milk", text: $description, axis: .vertical)
                 .lineLimit(3...6)
                 .focused($isEditing)
         } footer: {
-            Text("Write it like you'd say it, in English or Spanish. You'll review everything before it's added.")
+            Text("Type or dictate it like you'd say it, in English or Spanish. You'll review everything before it's added.")
+        }
+        Section {
+            Button(isDictating ? "Stop dictating" : "Dictate", systemImage: isDictating ? "stop.circle.fill" : "mic") {
+                isEditing = false
+                isDictating.toggle()
+            }
+            // The keyboard has its own "Dictate" button.
+            .accessibilityIdentifier("dictation-toggle")
+            Picker("Language", selection: $language) {
+                ForEach(DictationLanguage.allCases) { Text($0.name).tag($0) }
+            }
+            .disabled(isDictating)
+            dictationStatus(dictationModel.state)
         }
         if case .failed(let message) = model.phase {
             Section {
@@ -83,9 +108,31 @@ struct DescribeMealView: View {
         Section {
             Button("Find foods", systemImage: "sparkles") {
                 isEditing = false
+                isDictating = false
                 Task { await model.analyze(description) }
             }
             .disabled(description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        }
+    }
+
+    @ViewBuilder
+    private func dictationStatus(_ state: DictationModel.State) -> some View {
+        switch state {
+        case .idle:
+            EmptyView()
+        case .downloadingLanguage:
+            HStack(spacing: 12) {
+                ProgressView()
+                Text("Downloading the \(language.name) speech model…")
+                    .foregroundStyle(.secondary)
+            }
+        case .listening:
+            Label("Listening…", systemImage: "waveform")
+                .symbolEffect(.variableColor.iterative)
+                .foregroundStyle(.secondary)
+        case .failed(let message):
+            Label(message, systemImage: "exclamationmark.triangle")
+                .foregroundStyle(.orange)
         }
     }
 

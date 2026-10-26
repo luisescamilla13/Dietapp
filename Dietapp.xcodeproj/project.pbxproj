@@ -11,6 +11,7 @@
 		D28FDF92308BDF000005912D /* LoggingKit in Frameworks */ = {isa = PBXBuildFile; productRef = D28FDF82308BDF000005912D /* LoggingKit */; };
 		D28FDF93308BDF000005912D /* FoodParsingKit in Frameworks */ = {isa = PBXBuildFile; productRef = D28FDF83308BDF000005912D /* FoodParsingKit */; };
 		D28FDF94308BDF000005912D /* FoodVisionKit in Frameworks */ = {isa = PBXBuildFile; productRef = D28FDF84308BDF000005912D /* FoodVisionKit */; };
+		D28FDF95308BDF000005912D /* DictationKit in Frameworks */ = {isa = PBXBuildFile; productRef = D28FDF85308BDF000005912D /* DictationKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +77,7 @@
 				D28FDF92308BDF000005912D /* LoggingKit in Frameworks */,
 				D28FDF93308BDF000005912D /* FoodParsingKit in Frameworks */,
 				D28FDF94308BDF000005912D /* FoodVisionKit in Frameworks */,
+				D28FDF95308BDF000005912D /* DictationKit in Frameworks */,
 			);
 		};
 		D28FDF59308BDEEE0005912D /* Frameworks */ = {
@@ -142,6 +144,7 @@
 				D28FDF82308BDF000005912D /* LoggingKit */,
 				D28FDF83308BDF000005912D /* FoodParsingKit */,
 				D28FDF84308BDF000005912D /* FoodVisionKit */,
+				D28FDF85308BDF000005912D /* DictationKit */,
 			);
 			productName = Dietapp;
 			productReference = D28FDF4F308BDEED0005912D /* Dietapp.app */;
@@ -419,6 +422,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Dietapp/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Dietapp listens while you dictate a meal. Your speech is transcribed on your device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -453,6 +457,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Dietapp/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Dietapp listens while you dictate a meal. Your speech is transcribed on your device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -619,6 +624,10 @@
 		D28FDF84308BDF000005912D /* FoodVisionKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FoodVisionKit;
+		};
+		D28FDF85308BDF000005912D /* DictationKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DictationKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

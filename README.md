@@ -32,6 +32,7 @@ The app target is a thin SwiftUI layer. The logic lives in a local Swift package
 | `LoggingKit` | Meals and daily totals with SwiftData. Depends on `NutritionKit` |
 | `FoodParsingKit` | Natural language → structured food items with Foundation Models |
 | `FoodVisionKit` | Photo → food suggestions with Vision / Core ML |
+| `DictationKit` | Speech → text on device with `SpeechAnalyzer`, in English or Spanish |
 
 Each module exposes protocols with mock implementations, which the tests and SwiftUI previews use. The packages also build for macOS, so their tests run with `swift test` in seconds, without a simulator.
 
@@ -54,7 +55,8 @@ You can get a free USDA API key at [fdc.nal.usda.gov](https://fdc.nal.usda.gov/a
 Running the tests:
 
 ```sh
-# Package tests on macOS (offline, using recorded USDA responses)
+# Package tests on macOS (offline, using recorded USDA responses). The language model
+# and speech tests run only where Apple Intelligence and the speech models are installed.
 cd Packages && swift test
 
 # Also run the tests that call the real USDA API
@@ -70,7 +72,7 @@ xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
   -parallel-testing-enabled NO
 ```
 
-The UI tests launch the app with `-in-memory-store`, `-stub-search` and `-stub-parser`, so they never touch your data, the network or the language model.
+The UI tests launch the app with `-in-memory-store`, `-stub-search`, `-stub-parser` and `-stub-dictation`, so they never touch your data, the network, the language model or the microphone.
 
 ```sh
 # Opt-in: describe a meal with the real on-device model and the real USDA API
@@ -85,7 +87,7 @@ TEST_RUNNER_LIVE_UI_TESTS=1 xcodebuild test -project Dietapp.xcodeproj -scheme D
 - [x] **Phase 0:** project foundation, modules, CI
 - [x] **Phase 1:** food logging MVP: USDA search, meals, daily totals, history charts
 - [ ] **Phase 2:** barcode scanning with Open Food Facts
-- [ ] **Phase 3:** text and voice logging with on-device Foundation Models
+- [x] **Phase 3:** text and voice logging with on-device Foundation Models
 - [ ] **Phase 4:** food suggestions from a photo
 - [ ] **Phase 5:** quality: test coverage, accessibility, Spanish and English localization
 - [ ] **Phase 6:** open-source verification harness that lets AI coding agents drive the app
