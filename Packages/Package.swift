@@ -28,12 +28,7 @@ let package = Package(
         .target(name: "FoodVisionKit", swiftSettings: swiftSettings),
         .target(name: "DictationKit", swiftSettings: swiftSettings),
 
-        .testTarget(
-            name: "NutritionKitTests",
-            dependencies: ["NutritionKit"],
-            resources: [.copy("Fixtures")],
-            swiftSettings: swiftSettings
-        ),
+        .testTarget(name: "NutritionKitTests", dependencies: ["NutritionKit"], swiftSettings: swiftSettings),
         .testTarget(name: "LoggingKitTests", dependencies: ["LoggingKit"], swiftSettings: swiftSettings),
         .testTarget(name: "FoodParsingKitTests", dependencies: ["FoodParsingKit"], swiftSettings: swiftSettings),
         .testTarget(

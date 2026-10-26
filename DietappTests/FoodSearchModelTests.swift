@@ -31,7 +31,7 @@ struct FoodSearchModelTests {
     }
 
     @Test func showsAMessageWhenSearchFails() async {
-        let model = FoodSearchModel(search: FailingSearch(error: USDAClientError.rateLimited), debounce: .zero)
+        let model = FoodSearchModel(search: FailingSearch(error: LocalFoodDatabaseError.queryFailed("disk I/O error")), debounce: .zero)
 
         await model.search(for: "apple")
 
@@ -39,7 +39,7 @@ struct FoodSearchModelTests {
             Issue.record("Expected a failure, got \(model.state)")
             return
         }
-        #expect(message.contains("Too many searches"))
+        #expect(message == "Search failed. Try again.")
     }
 
     @Test func cancelledSearchKeepsThePreviousState() async {
@@ -54,7 +54,7 @@ struct FoodSearchModelTests {
 }
 
 private struct FailingSearch: NutritionSearching {
-    let error: USDAClientError
+    let error: LocalFoodDatabaseError
 
     func searchFoods(matching query: String) async throws -> [Food] {
         throw error

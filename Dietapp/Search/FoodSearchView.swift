@@ -23,7 +23,7 @@ struct FoodSearchView: View {
             content
                 .navigationTitle("Add food")
                 .navigationBarTitleDisplayMode(.inline)
-                .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search foods in English")
+                .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search foods in English or Spanish")
                 .toolbar {
                     Button("Cancel", role: .cancel) { dismiss() }
                 }
@@ -63,7 +63,7 @@ struct FoodSearchView: View {
                     query = suggestion.searchTerm
                 }
                 Section {
-                    Text("Or search for one food above, in English: \"apple\" or \"scrambled eggs\".")
+                    Text("Or search for one food above, in English or Spanish: \"scrambled eggs\" or \"huevos revueltos\".")
                         .foregroundStyle(.secondary)
                 }
             }

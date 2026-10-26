@@ -2,16 +2,41 @@ import Foundation
 import Testing
 @testable import NutritionKit
 
-struct SearchRankingTests {
-    @Test func searchTermsSkipStopWordsPluralsAndAccents() {
-        #expect(SearchRanking.terms(in: "Coffee with Milk") == ["coffee", "milk"])
-        #expect(SearchRanking.terms(in: "scrambled eggs") == ["scrambled", "egg"])
-        #expect(SearchRanking.terms(in: "tomatoes, peaches") == ["tomato", "peach"])
-        #expect(SearchRanking.terms(in: "crème brûlée") == ["creme", "brulee"])
-        #expect(SearchRanking.terms(in: "glass") == ["glass"])
-        #expect(SearchRanking.terms(in: "  \"*  ") == [])
+struct SearchQueryTests {
+    @Test func skipsStopWordsPluralsAndAccents() {
+        #expect(words(of: "Coffee with Milk") == [["coffee"], ["milk"]])
+        #expect(words(of: "scrambled eggs") == [["scrambled"], ["egg"]])
+        #expect(words(of: "tomatoes, peaches") == [["tomato"], ["peach"]])
+        #expect(words(of: "crème brûlée") == [["creme"], ["brulee"]])
+        #expect(words(of: "glass") == [["glass"]])
+        #expect(SearchQuery("  \"*  ").isEmpty)
     }
 
+    @Test func translatesSpanishWords() {
+        #expect(SearchQuery("pollo").terms == [.init(original: ["pollo"], english: ["chicken"])])
+        #expect(SearchQuery("Frijoles").terms == [.init(original: ["frijole"], english: ["bean"])])
+        #expect(SearchQuery("limones").terms == [.init(original: ["limone"], english: ["lime"])])
+        #expect(SearchQuery("camote").terms == [.init(original: ["camote"], english: ["sweet", "potato"])])
+    }
+
+    @Test func translatesPhrasesAsAWhole() {
+        #expect(SearchQuery("tacos al pastor").terms == [.init(original: ["taco", "pastor"], english: ["taco", "corn", "tortilla", "pork"])])
+        #expect(SearchQuery("papas a la francesa").terms == [.init(original: ["papa", "francesa"], english: ["french", "frie"])])
+        #expect(SearchQuery("pollo frito").terms.count == 2)
+    }
+
+    @Test func searchesTheOriginalAndTheTranslation() {
+        #expect(SearchQuery("egg").matchExpressions == [#""egg"*"#])
+        #expect(SearchQuery("pan integral").matchExpressions == [#""pan"* "integral"*"#, #""bread"* "whole"* "wheat"*"#])
+        #expect(SearchQuery("pollo grilled").matchExpressions == [#""pollo"* "grilled"*"#, #""chicken"* "grilled"*"#])
+    }
+
+    private func words(of text: String) -> [[String]] {
+        SearchQuery(text).terms.map(\.original)
+    }
+}
+
+struct SearchRankingTests {
     @Test func prefersTheFoodItselfOverDishesThatMentionIt() {
         let ranked = SearchRanking.rank([
             candidate("Eggnog", 0),
@@ -59,10 +84,45 @@ struct LocalFoodDatabaseTests {
         #expect(foods.first?.name == expected, "\(foods.prefix(5).map(\.name))")
     }
 
-    @Test func returnsTheSameFoodsAsTheUSDAAPI() async throws {
+    @Test(arguments: [
+        ("manzana", "Apple, raw"),
+        ("plátanos", "Banana, raw"),
+        ("leche", "Milk, NFS"),
+        ("huevos revueltos", "Egg, whole, cooked, scrambled"),
+        ("café con leche", "Coffee, cafe con leche"),
+        ("frijoles", "Beans, NFS"),
+        ("frijoles refritos", "Refried beans"),
+        ("tacos al pastor", "Taco, corn tortilla, pork, cheese"),
+        ("tortilla de harina", "Tortilla, flour"),
+        ("papas fritas", "Potato, french fries, NFS"),
+        ("pechuga de pollo", "Chicken breast, stewed, skin eaten"),
+        ("caldo de pollo", "Soup, sopa or caldo de pollo"),
+        ("arroz con leche", "Pudding, rice"),
+        ("jugo de naranja", "Orange juice, 100%, NFS"),
+        ("refresco", "Soft drink, NFS"),
+        ("elote", "Corn, raw"),
+        ("aguacate", "Avocado, raw"),
+        ("queso fresco", "Cheese, queso fresco, solid"),
+        ("pan dulce", "Pan dulce, NFS"),
+        ("enchiladas de pollo", "Enchilada, chicken"),
+        ("fresas", "Strawberries, raw"),
+        ("frijoles negros", "Black beans, NFS"),
+        ("aceite de oliva", "Olive oil"),
+    ])
+    func findsTheCommonFoodInSpanish(query: String, expected: String) async throws {
+        let foods = try await database.searchFoods(matching: query)
+
+        #expect(foods.first?.name == expected, "\(foods.prefix(5).map(\.name))")
+    }
+
+    @Test func ignoresWordsThatMatchNothingAtTheEnd() async throws {
+        #expect(try await database.searchFoods(matching: "chilaquiles verdes").first?.name == "Chilaquiles")
+    }
+
+    @Test func keepsFoodDataCentralIDs() async throws {
         let taco = try #require(try await database.searchFoods(matching: "taco").first)
 
-        // Same FDC ID as the API, so a food logged from either source is the same food.
+        // Same FDC ID as FoodData Central, so foods logged earlier through the USDA API still match.
         #expect(taco.id == "usda:2708514")
         #expect(taco.nutrientsPer100g.calories == 246)
         #expect(taco.nutrientsPer100g.protein == 15.31)
@@ -84,7 +144,7 @@ struct LocalFoodDatabaseTests {
     @Test func treatsSearchSyntaxAsText() async throws {
         // Quotes, operators and parentheses would be FTS5 syntax if they reached SQLite.
         #expect(try await database.searchFoods(matching: "apple\" * (").first?.name == "Apple, raw")
-        #expect(try await database.searchFoods(matching: "NOT AND NEAR(").isEmpty)
+        #expect(try await database.searchFoods(matching: "zzzqqq NOT AND NEAR(").isEmpty)
         #expect(try await database.searchFoods(matching: "   ").isEmpty)
         #expect(try await database.searchFoods(matching: "zzzqqq").isEmpty)
     }

@@ -28,7 +28,7 @@ The app target is a thin SwiftUI layer. The logic lives in a local Swift package
 
 | Module | Responsibility |
 |---|---|
-| `NutritionKit` | Domain models (`Food`, `Nutrients`), the bundled food database and the USDA API client |
+| `NutritionKit` | Domain models (`Food`, `Nutrients`), and the bundled food database |
 | `LoggingKit` | Meals and daily totals with SwiftData. Depends on `NutritionKit` |
 | `FoodParsingKit` | Natural language → structured food items with Foundation Models |
 | `FoodVisionKit` | Photo → food suggestions with Vision's on-device image classifier |
@@ -53,23 +53,20 @@ The app needs no API key: foods come from the bundled database.
 
 ### Food database
 
-`Packages/Sources/NutritionKit/Resources/foods.sqlite` holds about 13,600 generic foods from [USDA FoodData Central](https://fdc.nal.usda.gov) (public domain): the Survey (FNDDS), Foundation and SR Legacy datasets, with nutrients per 100 g and household portions. Food IDs match the USDA API, so `usda:2708514` is "Taco, NFS" in both. To rebuild it, for example after a new USDA release:
+`Packages/Sources/NutritionKit/Resources/foods.sqlite` holds about 13,600 generic foods from [USDA FoodData Central](https://fdc.nal.usda.gov) (public domain): the Survey (FNDDS), Foundation and SR Legacy datasets, with nutrients per 100 g and household portions. Food IDs are FoodData Central's, so `usda:2708514` is "Taco, NFS" on [fdc.nal.usda.gov](https://fdc.nal.usda.gov/food-details/2708514/nutrients). To rebuild it, for example after a new USDA release:
 
 ```sh
 python3 Tools/build_food_database.py   # standard library only; caches downloads in Tools/.cache
 ```
 
-Search uses SQLite's FTS5 for candidates, then ranks them in Swift (`SearchRanking`), so "egg" finds "Egg, whole, raw" before "Eggnog".
+Search uses SQLite's FTS5 for candidates, then ranks them in Swift (`SearchRanking`), so "egg" finds "Egg, whole, raw" before "Eggnog". It works in English and Spanish: `SearchQuery` also searches the English translation of Spanish words and phrases (`SpanishFoodWords`), so "pollo" finds chicken, "frijoles refritos" finds refried beans, and foods FoodData Central already names in Spanish, like "Soup, sopa or caldo de pollo", still match.
 
 Running the tests:
 
 ```sh
-# Package tests on macOS (offline, using recorded USDA responses). The language model
-# and speech tests run only where Apple Intelligence and the speech models are installed.
+# Package tests on macOS, offline. The language model and speech tests run only where
+# Apple Intelligence and the speech models are installed.
 cd Packages && swift test
-
-# Also run the tests that call the real USDA API (needs a free key from fdc.nal.usda.gov)
-USDA_API_KEY=your_key swift test
 
 # App tests on the simulator
 xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
