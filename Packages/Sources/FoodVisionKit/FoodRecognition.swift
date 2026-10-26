@@ -20,6 +20,8 @@ public struct FoodSuggestion: Identifiable, Hashable, Sendable {
 
 public enum FoodRecognitionError: Error, Equatable {
     case unreadableImage
+    /// The classifier can't run here, as on the iOS simulator.
+    case unavailable
     case failed
 }
 

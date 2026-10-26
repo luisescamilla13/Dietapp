@@ -32,6 +32,18 @@ struct PhotoSuggestionsModelTests {
         }
     }
 
+    @Test func explainsWhenRecognitionIsUnavailable() async {
+        let model = PhotoSuggestionsModel(recognizer: StubFoodRecognizer(error: .unavailable))
+
+        await model.recognize(Data())
+
+        guard case .failed(let message) = model.state else {
+            Issue.record("Expected a failure, got \(model.state)")
+            return
+        }
+        #expect(message.contains("real device"))
+    }
+
     @Test func showsSearchTermsInSentenceCase() {
         let fries = FoodSuggestion(label: "fries", searchTerm: "french fries", confidence: 0.5)
 

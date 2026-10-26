@@ -31,6 +31,8 @@ final class PhotoSuggestionsModel {
             // A newer photo replaced this one.
         } catch FoodRecognitionError.unreadableImage {
             state = .failed(String(localized: "Couldn't open that photo. Try another one."))
+        } catch FoodRecognitionError.unavailable {
+            state = .failed(String(localized: "Photo suggestions need a real device. The simulator can't run Vision's classifier."))
         } catch {
             state = .failed(String(localized: "Couldn't look at that photo. Try again."))
         }
