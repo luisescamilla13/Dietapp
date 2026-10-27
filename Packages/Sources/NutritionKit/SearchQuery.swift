@@ -36,6 +36,10 @@ struct SearchQuery: Equatable {
             }
             index += 1
         }
+        // Search runs while the user types, so the last word may be unfinished.
+        if let last = raw.last, terms.last?.original == [Self.singular(last)], terms.last?.english == nil {
+            terms[terms.count - 1].english = Self.completion(of: last)
+        }
     }
 
     var isEmpty: Bool { terms.isEmpty }
@@ -85,6 +89,19 @@ struct SearchQuery: Equatable {
     /// `singular` only cuts to "e": "frijoles" → "frijole" → "frijol".
     private static func translation(of word: String) -> [String]? {
         translations[word] ?? (word.hasSuffix("e") ? translations[String(word.dropLast())] : nil)
+    }
+
+    private static let completions: [(spanish: String, english: [String])] = SpanishFoodWords.words.map {
+        (words(in: $0)[0], terms(in: $1))
+    }
+
+    /// The English words for the one Spanish word that starts with `prefix`: "huev" →
+    /// "egg". Short or ambiguous prefixes get none, so "chic" (chícharo or chicharrón)
+    /// doesn't crowd out the "chicken" someone is typing.
+    private static func completion(of prefix: String) -> [String]? {
+        guard prefix.count >= 4 else { return nil }
+        let matches = completions.filter { $0.spanish.hasPrefix(prefix) }
+        return matches.count == 1 ? matches[0].english : nil
     }
 
     // MARK: - Normalizing

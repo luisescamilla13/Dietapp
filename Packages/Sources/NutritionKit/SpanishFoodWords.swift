@@ -206,6 +206,7 @@ enum SpanishFoodWords {
         "malteada": "milk shake",
         "refresco": "soft drink",
         "ron": "rum",
+        "soda": "soft drink",
         "té": "tea",
         "vino": "wine",
         "zumo": "juice",

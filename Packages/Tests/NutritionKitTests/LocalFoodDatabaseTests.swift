@@ -19,6 +19,15 @@ struct SearchQueryTests {
         #expect(SearchQuery("camote").terms == [.init(original: ["camote"], english: ["sweet", "potato"])])
     }
 
+    @Test func completesTheLastSpanishWord() {
+        #expect(SearchQuery("huev").terms == [.init(original: ["huev"], english: ["egg"])])
+        #expect(SearchQuery("tacos de poll").terms.last == .init(original: ["poll"], english: ["chicken"]))
+        // Too short, ambiguous, or not the last word.
+        #expect(SearchQuery("hue").terms == [.init(original: ["hue"], english: nil)])
+        #expect(SearchQuery("chic").terms == [.init(original: ["chic"], english: nil)])
+        #expect(SearchQuery("huev rancheros").terms.first == .init(original: ["huev"], english: nil))
+    }
+
     @Test func translatesPhrasesAsAWhole() {
         #expect(SearchQuery("tacos al pastor").terms == [.init(original: ["taco", "pastor"], english: ["taco", "corn", "tortilla", "pork"])])
         #expect(SearchQuery("papas a la francesa").terms == [.init(original: ["papa", "francesa"], english: ["french", "frie"])])
@@ -43,13 +52,13 @@ struct SearchRankingTests {
             candidate("Egg burrito", 0),
             candidate("Pie, apple", 0),
             candidate("Egg, whole, raw", 0.5),
-        ], for: ["egg"])
+        ], for: SearchQuery("egg"))
 
         #expect(ranked.map(\.name) == ["Egg, whole, raw", "Egg burrito", "Eggnog", "Pie, apple"])
     }
 
     @Test func keepsTheBestOfRepeatedNames() {
-        let ranked = SearchRanking.rank([candidate("Strawberries, raw", 1, id: 1), candidate("Strawberries, raw", 0, id: 2)], for: ["strawberry"])
+        let ranked = SearchRanking.rank([candidate("Strawberries, raw", 1, id: 1), candidate("Strawberries, raw", 0, id: 2)], for: SearchQuery("strawberry"))
 
         #expect(ranked.map(\.id) == [2])
     }
@@ -77,6 +86,13 @@ struct LocalFoodDatabaseTests {
         ("french fries", "Potato, french fries, NFS"),
         ("corn tortilla", "Tortilla, corn"),
         ("chilaquiles", "Chilaquiles"),
+        // Generic words find the generic food, not the shortest name.
+        ("egg", "Egg, whole, raw"),
+        ("chicken", "Chicken, NS as to part and cooking method, NS as to skin eaten"),
+        ("coffee", "Coffee, NS as to type"),
+        ("bread", "Bread, NS as to major flour"),
+        ("salmon", "Fish, salmon, NFS"),
+        ("soda", "Soft drink, NFS"),
     ])
     func findsTheCommonFoodFirst(query: String, expected: String) async throws {
         let foods = try await database.searchFoods(matching: query)
@@ -95,17 +111,19 @@ struct LocalFoodDatabaseTests {
         ("tacos al pastor", "Taco, corn tortilla, pork, cheese"),
         ("tortilla de harina", "Tortilla, flour"),
         ("papas fritas", "Potato, french fries, NFS"),
-        ("pechuga de pollo", "Chicken breast, stewed, skin eaten"),
-        ("caldo de pollo", "Soup, sopa or caldo de pollo"),
+        ("pechuga de pollo", "Chicken breast, NS as to cooking method, skin eaten"),
+        ("caldo de pollo", "Soup, chicken"),
         ("arroz con leche", "Pudding, rice"),
         ("jugo de naranja", "Orange juice, 100%, NFS"),
         ("refresco", "Soft drink, NFS"),
         ("elote", "Corn, raw"),
         ("aguacate", "Avocado, raw"),
-        ("queso fresco", "Cheese, queso fresco, solid"),
+        ("queso fresco", "Queso Fresco"),
         ("pan dulce", "Pan dulce, NFS"),
         ("enchiladas de pollo", "Enchilada, chicken"),
         ("fresas", "Strawberries, raw"),
+        ("huev", "Egg, whole, raw"),
+        ("café", "Coffee, NS as to type"),
         ("frijoles negros", "Black beans, NFS"),
         ("aceite de oliva", "Olive oil"),
     ])
