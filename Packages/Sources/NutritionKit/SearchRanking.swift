@@ -3,7 +3,7 @@ import Foundation
 /// Orders full-text search candidates the way people expect: "egg" finds "Egg, whole,
 /// raw" before "Eggnog", and "apple" finds "Apple, raw" before "Pie, apple".
 ///
-/// Terms are every word of the query in both languages, so "manzana" ranks by "apple" too.
+/// A Spanish term ranks by its English translation too, so "manzana" ranks like "apple".
 enum SearchRanking {
     struct Candidate: Equatable {
         var id: Int64
@@ -12,9 +12,13 @@ enum SearchRanking {
         var baseScore: Double
     }
 
+    /// Categories that FoodData Central puts before the food: "Fish, salmon, raw" is
+    /// salmon. Dishes like "Pie, apple" aren't here, since they aren't the fruit.
+    private static let categories: Set<String> = ["crustacean", "fish", "mollusk", "nut", "pepper", "seed", "spice"]
+
     /// Best first, without repeated names: several datasets have "Strawberries, raw".
-    static func rank(_ candidates: [Candidate], for terms: Set<String>) -> [Candidate] {
-        let scored = candidates.map { candidate in (candidate, score(candidate, for: terms)) }
+    static func rank(_ candidates: [Candidate], for query: SearchQuery) -> [Candidate] {
+        let scored = candidates.map { candidate in (candidate, score(candidate, for: query)) }
         var seen: Set<String> = []
         return scored
             .sorted { $0.1 < $1.1 }
@@ -22,18 +26,26 @@ enum SearchRanking {
             .filter { seen.insert($0.name.lowercased()).inserted }
     }
 
-    private static func score(_ candidate: Candidate, for terms: Set<String>) -> Double {
-        let nameWords = SearchQuery.words(in: candidate.name).map(SearchQuery.singular)
+    private static func score(_ candidate: Candidate, for query: SearchQuery) -> Double {
+        let words = query.words
+        let nameWords = Set(SearchQuery.words(in: candidate.name).map(SearchQuery.singular))
+        var segments = candidate.name.split(separator: ",").map { SearchQuery.words(in: $0).map(SearchQuery.singular) }
+        if segments.count > 1, segments[0].count == 1, categories.contains(segments[0][0]) {
+            segments.removeFirst()
+        }
+        let head = segments.first ?? []
         var score = candidate.baseScore
         // Names start with the food itself: "Rice, white", not "Beans and white rice".
-        if let first = nameWords.first, terms.contains(first) {
+        if let first = head.first, words.contains(first) {
             score -= 2
         }
-        // Whole words beat prefix matches: "egg" over "eggnog".
-        score -= Double(terms.filter(nameWords.contains).count)
+        // Whole words beat prefix matches: "egg" over "eggnog". Per term, so "café"
+        // doesn't favor names that have both "cafe" and "coffee".
+        score -= Double(query.terms.filter { term in
+            Set(term.original).isSubset(of: nameWords) || term.english.map { Set($0).isSubset(of: nameWords) } == true
+        }.count)
         // The part before the first comma is just the searched food: "Egg, whole" over "Egg burrito".
-        let head = SearchQuery.words(in: candidate.name.prefix { $0 != "," }).map(SearchQuery.singular)
-        if !head.isEmpty, Set(head).isSubset(of: terms) {
+        if !head.isEmpty, Set(head).isSubset(of: words) {
             score -= 1.5
         }
         return score

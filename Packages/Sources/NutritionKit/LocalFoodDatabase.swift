@@ -47,7 +47,7 @@ public actor LocalFoodDatabase: NutritionSearching {
             query.terms.removeLast()
             candidates = try self.candidates(matching: query)
         }
-        let ranked = SearchRanking.rank(candidates, for: query.words).prefix(resultLimit)
+        let ranked = SearchRanking.rank(candidates, for: query).prefix(resultLimit)
         let foods = try foods(withIDs: ranked.map(\.id))
         return ranked.compactMap { foods[$0.id] }
     }
@@ -58,7 +58,7 @@ public actor LocalFoodDatabase: NutritionSearching {
             SELECT foods.id, foods.name, bm25(foods_search), foods.priority
             FROM foods_search JOIN foods ON foods.id = foods_search.rowid
             WHERE foods_search MATCH ?
-            ORDER BY bm25(foods_search) + foods.priority
+            ORDER BY \(Self.textScoreWeight) * bm25(foods_search) + foods.priority
             LIMIT 60
             """
         var best: [Int64: SearchRanking.Candidate] = [:]
@@ -70,7 +70,7 @@ public actor LocalFoodDatabase: NutritionSearching {
             // Spanish and English matches compete on priority and ranking alone.
             let bestTextScore = matches.map(\.textScore).min() ?? 0
             for match in matches {
-                let candidate = SearchRanking.Candidate(id: match.id, name: match.name, baseScore: match.textScore - bestTextScore + match.priority)
+                let candidate = SearchRanking.Candidate(id: match.id, name: match.name, baseScore: Self.textScoreWeight * (match.textScore - bestTextScore) + match.priority)
                 if best[match.id].map({ candidate.baseScore < $0.baseScore }) ?? true {
                     best[match.id] = candidate
                 }
@@ -126,6 +126,11 @@ public actor LocalFoodDatabase: NutritionSearching {
             }
         }
     }
+
+    /// How much bm25 counts next to a food's priority. Every candidate contains every
+    /// term, so bm25 mostly measures how short the name is, which favors specific dishes
+    /// like "Egg, creamed" over generic foods like "Egg, whole, raw".
+    static let textScoreWeight = 0.3
 
     /// Tells SQLite to copy bound strings, since Swift's bridged C strings are temporary.
     private static let transient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)

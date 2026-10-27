@@ -50,6 +50,8 @@ NUTRIENTS = {
 
 UNDETERMINED_UNIT = "9999"
 
+NOT_SPECIFIED = re.compile(r",? NS as to [^,]*")
+
 # Survey (FNDDS) names read like what people eat ("Apple, raw"), so they rank first.
 DATA_TYPE_PRIORITY = {"survey_fndds_food": 0.0, "foundation_food": 0.3, "sr_legacy_food": 0.6}
 
@@ -131,11 +133,16 @@ def priority(name, data_type):
         penalty += 2
     if re.search(r"\b(meatless|imitation)\b", name):
         penalty += 1.5  # "Chicken, meatless" is not what "chicken" means.
-    if re.search(r"\bNFS\b", name):
-        penalty -= 0.6  # "Not further specified", the generic version.
+    # "Not further specified" and "NS as to cooking method" mark the generic version.
+    # The "NS as to" parts don't count toward length, since they make names longer, not more specific.
+    generic = NOT_SPECIFIED.sub("", name)
+    if generic != name or re.search(r"\bNFS\b", name):
+        penalty -= 0.6
     if re.search(r"\braw\b", name):
         penalty -= 0.3
-    return penalty + 0.03 * len(name)  # Shorter names are more general.
+    if re.search(r"\b(dried|dehydrated|powder|powdered|freeze-dried|dry mix)\b", name):
+        penalty += 0.5  # "Egg, whole, dried" is an ingredient, not what people eat.
+    return penalty + 0.03 * len(generic)  # Shorter names are more general.
 
 
 def read_portions(tables, data_type, food_ids):
