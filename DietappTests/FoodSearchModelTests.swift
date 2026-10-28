@@ -39,7 +39,7 @@ struct FoodSearchModelTests {
             Issue.record("Expected a failure, got \(model.state)")
             return
         }
-        #expect(message == "Search failed. Try again.")
+        #expect(message == String(localized: "Search failed. Try again."))
     }
 
     @Test func cancelledSearchKeepsThePreviousState() async {

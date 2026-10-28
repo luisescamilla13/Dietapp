@@ -9,6 +9,9 @@ through the USDA API, with their nutrients per 100 g and household portions.
 
 Downloads the datasets once into Tools/.cache (git-ignored) and writes
 Packages/Sources/NutritionKit/Resources/foods.sqlite. Uses only the standard library.
+
+Spanish names come from two hand-written tables: Tools/spanish_food_names.tsv for the
+foods searches find most often, and Tools/spanish_portion_names.tsv for common portions.
 """
 
 import csv
@@ -24,6 +27,8 @@ from datetime import date
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE = os.path.join(ROOT, "Tools", ".cache")
 OUTPUT = os.path.join(ROOT, "Packages", "Sources", "NutritionKit", "Resources", "foods.sqlite")
+SPANISH_FOOD_NAMES = os.path.join(ROOT, "Tools", "spanish_food_names.tsv")
+SPANISH_PORTION_NAMES = os.path.join(ROOT, "Tools", "spanish_portion_names.tsv")
 USER_AGENT = "Dietapp-build/1.0 (https://github.com/luisescamilla13/Dietapp)"
 
 # The data type as stored in the CSVs, and the zip it ships in.
@@ -64,6 +69,7 @@ def main():
         foods += dataset_foods
         portions += read_portions(tables, data_type, {food[0] for food in dataset_foods})
         print(f"{dataset}: {len(dataset_foods)} foods")
+    foods, portions = add_spanish_names(foods, portions)
     write(foods, portions)
     size = os.path.getsize(OUTPUT) / 1_000_000
     print(f"Wrote {len(foods)} foods and {len(portions)} portions to {os.path.relpath(OUTPUT, ROOT)} ({size:.1f} MB)")
@@ -179,6 +185,27 @@ def format_amount(text):
     return str(int(value)) if value.is_integer() else f"{value:g}"
 
 
+def add_spanish_names(foods, portions):
+    """Appends each food's and portion's Spanish name, or None, to its row."""
+    food_names = {int(fdc_id): (name, spanish) for fdc_id, name, spanish in read_table(SPANISH_FOOD_NAMES)}
+    portion_names = dict(read_table(SPANISH_PORTION_NAMES))
+    names = {food[0]: food[1] for food in foods}
+    for fdc_id, (name, _) in food_names.items():
+        # The English name guards against translating a food USDA renamed or replaced.
+        if names.get(fdc_id) != name:
+            sys.exit(f"spanish_food_names.tsv: {fdc_id} is {names.get(fdc_id)!r}, not {name!r}")
+    foods = [food + (food_names.get(food[0], (None, None))[1],) for food in foods]
+    portions = [portion + (portion_names.get(portion[2]),) for portion in portions]
+    print(f"Spanish names: {len(food_names)} foods, {sum(p[-1] is not None for p in portions)} portions")
+    return foods, portions
+
+
+def read_table(path):
+    """The rows of a tab-separated file, without its header."""
+    with open(path, encoding="utf-8") as file:
+        return list(csv.reader(file, delimiter="\t"))[1:]
+
+
 def write(foods, portions):
     os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
     if os.path.exists(OUTPUT):
@@ -194,13 +221,15 @@ def write(foods, portions):
             protein REAL NOT NULL,
             carbohydrates REAL NOT NULL,
             fat REAL NOT NULL,
-            fiber REAL NOT NULL
+            fiber REAL NOT NULL,
+            name_es TEXT
         );
         CREATE TABLE portions (
             food_id INTEGER NOT NULL REFERENCES foods(id),
             position INTEGER NOT NULL,
             name TEXT NOT NULL,
-            grams REAL NOT NULL
+            grams REAL NOT NULL,
+            name_es TEXT
         );
         CREATE INDEX portions_by_food ON portions(food_id, position);
         -- Full-text index over the names. remove_diacritics lets "creme" find "crème".
@@ -209,8 +238,8 @@ def write(foods, portions):
         );
         CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
     """)
-    db.executemany("INSERT INTO foods VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", foods)
-    db.executemany("INSERT INTO portions VALUES (?, ?, ?, ?)", portions)
+    db.executemany("INSERT INTO foods VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", foods)
+    db.executemany("INSERT INTO portions VALUES (?, ?, ?, ?, ?)", portions)
     db.execute("INSERT INTO foods_search(foods_search) VALUES ('rebuild')")
     db.executemany("INSERT INTO metadata VALUES (?, ?)", [
         ("source", "USDA FoodData Central (public domain, CC0)"),

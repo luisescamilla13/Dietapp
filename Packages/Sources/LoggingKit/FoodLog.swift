@@ -45,14 +45,16 @@ public final class FoodLog {
         )
     }
 
+    /// `name` is the name to keep for the entry, such as the Spanish one. It defaults to
+    /// the food's English name.
     @discardableResult
-    public func log(_ food: Food, grams: Double, portionName: String? = nil, to type: MealType, at date: Date = .now) throws -> FoodEntry {
+    public func log(_ food: Food, named name: String? = nil, grams: Double, portionName: String? = nil, to type: MealType, at date: Date = .now) throws -> FoodEntry {
         let meal = try meal(type, on: date) ?? {
             let meal = Meal(day: calendar.startOfDay(for: date), type: type)
             context.insert(meal)
             return meal
         }()
-        let entry = FoodEntry(food: food, grams: grams, portionName: portionName, loggedAt: date)
+        let entry = FoodEntry(food: food, name: name ?? food.name, grams: grams, portionName: portionName, loggedAt: date)
         context.insert(entry)
         meal.entries.append(entry)
         try context.save()

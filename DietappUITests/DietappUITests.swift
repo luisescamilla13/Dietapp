@@ -130,21 +130,30 @@ final class DietappUITests: XCTestCase {
         attachScreenshot(of: app, named: "10-spanish-search")
     }
 
-    /// The interface follows the device language. Food names stay as FoodData Central has them.
+    /// The interface follows the device language, and so do the names of common foods.
     @MainActor
     func testSpanishInterface() throws {
-        let app = launchApp(arguments: ["-AppleLanguages", "(es)", "-AppleLocale", "es_MX"])
+        let app = launchApp(stubbingSearch: false, language: "es", region: "es_MX")
         XCTAssertTrue(app.navigationBars["Hoy"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Desayuno"].exists)
         attachScreenshot(of: app, named: "11-spanish-today")
 
         app.navigationBars.buttons["Agregar alimento"].tap()
-        XCTAssertTrue(app.buttons["Describe tu comida"].waitForExistence(timeout: 5))
-        app.buttons["Cancelar"].tap()
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.tap()
+        search.typeText("huevo")
+        let egg = app.staticTexts["Huevo entero, crudo"]
+        XCTAssertTrue(egg.waitForExistence(timeout: 5))
+        egg.tap()
+        XCTAssertTrue(app.staticTexts["1 huevo (50 g)"].waitForExistence(timeout: 5))
+        attachScreenshot(of: app, named: "12-spanish-add-food")
+        app.navigationBars.buttons["Agregar"].tap()
+        XCTAssertTrue(app.staticTexts["Huevo entero, crudo"].waitForExistence(timeout: 5))
 
         app.tabBars.buttons["Historial"].tap()
-        XCTAssertTrue(app.staticTexts["Días registrados, 0 de 7"].waitForExistence(timeout: 5))
-        attachScreenshot(of: app, named: "12-spanish-history")
+        XCTAssertTrue(app.staticTexts["Días registrados, 1 de 7"].waitForExistence(timeout: 5))
+        attachScreenshot(of: app, named: "13-spanish-history")
     }
 
     /// The same flow with the real on-device model and the bundled food database. Opt-in,
@@ -154,7 +163,7 @@ final class DietappUITests: XCTestCase {
     func testLiveDescribeMeal() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["LIVE_UI_TESTS"] == "1", "Set TEST_RUNNER_LIVE_UI_TESTS=1 to run")
         let app = XCUIApplication()
-        app.launchArguments = ["-in-memory-store"]
+        app.launchArguments = ["-in-memory-store", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
 
         app.navigationBars.buttons["Add food"].tap()
@@ -172,10 +181,12 @@ final class DietappUITests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func launchApp(stubbingSearch: Bool = true, arguments: [String] = []) -> XCUIApplication {
+    /// In English unless `language` says otherwise, whatever the simulator's language.
+    private func launchApp(stubbingSearch: Bool = true, language: String = "en", region: String = "en_US") -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["-in-memory-store", "-stub-parser", "-stub-dictation", "-stub-recognizer"]
-            + (stubbingSearch ? ["-stub-search"] : []) + arguments
+            + (stubbingSearch ? ["-stub-search"] : [])
+            + ["-AppleLanguages", "(\(language))", "-AppleLocale", region]
         app.launch()
         return app
     }

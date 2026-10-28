@@ -29,6 +29,7 @@ public final class Meal {
 @Model
 public final class FoodEntry {
     public private(set) var foodID: String
+    /// The name shown when the food was logged, in the app's language at the time.
     public private(set) var foodName: String
     public var grams: Double
     /// The household measure chosen when logging, such as "1 medium".
@@ -42,9 +43,9 @@ public final class FoodEntry {
 
     public var nutrients: Nutrients { nutrientsPer100g.scaled(by: grams / 100) }
 
-    init(food: Food, grams: Double, portionName: String?, loggedAt: Date) {
+    init(food: Food, name: String, grams: Double, portionName: String?, loggedAt: Date) {
         self.foodID = food.id
-        self.foodName = food.name
+        self.foodName = name
         self.grams = grams
         self.portionName = portionName
         self.loggedAt = loggedAt

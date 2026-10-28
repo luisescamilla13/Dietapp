@@ -1,3 +1,4 @@
+import Foundation
 import DictationKit
 import Testing
 @testable import Dietapp
@@ -23,6 +24,6 @@ struct DictationModelTests {
             Issue.record("Expected a failure, got \(model.state)")
             return
         }
-        #expect(message.contains("microphone"))
+        #expect(message == String(localized: "Allow microphone access in Settings to dictate."))
     }
 }

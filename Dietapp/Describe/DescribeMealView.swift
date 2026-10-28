@@ -181,7 +181,7 @@ struct DescribeMealView: View {
         do {
             for item in items {
                 guard let food = item.selectedFood else { continue }
-                try log.log(food, grams: item.grams, portionName: item.parsed.name, to: meal, at: log.loggingDate(for: day))
+                try log.log(food, named: food.displayName, grams: item.grams, portionName: item.parsed.name, to: meal, at: log.loggingDate(for: day))
             }
             onLogged()
         } catch {
@@ -203,7 +203,7 @@ private struct ReviewItemSection: View {
                 Toggle("Add this food", isOn: $item.isIncluded)
                 Picker("Food", selection: $item.selectedFoodID) {
                     ForEach(item.candidates) { food in
-                        Text(food.name).tag(Optional(food.id))
+                        Text(food.displayName).tag(Optional(food.id))
                     }
                 }
                 .disabled(!item.isIncluded)

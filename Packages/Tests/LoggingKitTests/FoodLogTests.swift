@@ -27,6 +27,12 @@ struct FoodLogTests {
         #expect(entry.nutrients == Nutrients(calories: 120, protein: 0.5, carbohydrates: 28, fat: 0.5, fiber: 4))
     }
 
+    @Test func keepsTheNameShownWhenLogging() throws {
+        let entry = try log.log(.apple, named: "Manzana, cruda", grams: 100, to: .snack, at: date("2026-10-23 16:00"))
+
+        #expect(entry.foodName == "Manzana, cruda")
+    }
+
     @Test func foodsInTheSameMealAndDayShareOneMeal() throws {
         try log.log(.apple, grams: 100, to: .breakfast, at: date("2026-10-23 08:00"))
         try log.log(.rice, grams: 100, to: .breakfast, at: date("2026-10-23 08:30"))
