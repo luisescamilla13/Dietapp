@@ -31,6 +31,16 @@
         }
       }
     },
+    "%@ of %@ g" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@ g"
+          }
+        }
+      }
+    },
     "%@ of %@ grams" : {
       "localizations" : {
         "es" : {
@@ -761,12 +771,12 @@
         }
       }
     },
-    "Search foods in English or Spanish" : {
+    "Search foods" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Busca alimentos en español o inglés"
+            "value" : "Buscar alimentos"
           }
         }
       }

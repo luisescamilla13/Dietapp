@@ -82,8 +82,13 @@ private struct DaySwitcher: View {
                 .modifier(RoundIconButton())
             Spacer()
             if !isToday {
-                Button("Back to today", action: goToToday)
-                    .font(.subheadline)
+                Button(action: goToToday) {
+                    // Small text, but a full 44-point tap target.
+                    Text("Back to today")
+                        .font(.subheadline)
+                        .frame(minHeight: 44)
+                        .contentShape(.rect)
+                }
             }
             Spacer()
             Button("Next day", systemImage: "chevron.right") { move(1) }
