@@ -91,7 +91,9 @@ private struct CalorieHistory: View {
 
         Section {
             LabeledContent("Daily average", value: "\(average.formatted(.number.precision(.fractionLength(0)))) kcal")
-            LabeledContent("Days logged", value: "\(loggedDays.count) of \(totals.count)")
+            LabeledContent("Days logged") {
+                Text("\(loggedDays.count) of \(totals.count)")
+            }
         } footer: {
             Text("The average only counts days with something logged.")
         }

@@ -130,6 +130,23 @@ final class DietappUITests: XCTestCase {
         attachScreenshot(of: app, named: "10-spanish-search")
     }
 
+    /// The interface follows the device language. Food names stay as FoodData Central has them.
+    @MainActor
+    func testSpanishInterface() throws {
+        let app = launchApp(arguments: ["-AppleLanguages", "(es)", "-AppleLocale", "es_MX"])
+        XCTAssertTrue(app.navigationBars["Hoy"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Desayuno"].exists)
+        attachScreenshot(of: app, named: "11-spanish-today")
+
+        app.navigationBars.buttons["Agregar alimento"].tap()
+        XCTAssertTrue(app.buttons["Describe tu comida"].waitForExistence(timeout: 5))
+        app.buttons["Cancelar"].tap()
+
+        app.tabBars.buttons["Historial"].tap()
+        XCTAssertTrue(app.staticTexts["Días registrados, 0 de 7"].waitForExistence(timeout: 5))
+        attachScreenshot(of: app, named: "12-spanish-history")
+    }
+
     /// The same flow with the real on-device model and the bundled food database. Opt-in,
     /// since it needs Apple Intelligence on the Mac:
     /// `TEST_RUNNER_LIVE_UI_TESTS=1 xcodebuild test -only-testing:DietappUITests/DietappUITests/testLiveDescribeMeal …`
@@ -155,10 +172,10 @@ final class DietappUITests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func launchApp(stubbingSearch: Bool = true) -> XCUIApplication {
+    private func launchApp(stubbingSearch: Bool = true, arguments: [String] = []) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["-in-memory-store", "-stub-parser", "-stub-dictation", "-stub-recognizer"]
-            + (stubbingSearch ? ["-stub-search"] : [])
+            + (stubbingSearch ? ["-stub-search"] : []) + arguments
         app.launch()
         return app
     }

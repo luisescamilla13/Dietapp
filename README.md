@@ -61,6 +61,8 @@ python3 Tools/build_food_database.py   # standard library only; caches downloads
 
 Search uses SQLite's FTS5 for candidates, then ranks them in Swift (`SearchRanking`), so "egg" finds "Egg, whole, raw" before "Eggnog". It works in English and Spanish: `SearchQuery` also searches the English translation of Spanish words and phrases (`SpanishFoodWords`), so "pollo" finds chicken, "frijoles refritos" finds refried beans, and foods FoodData Central already names in Spanish, like "Soup, sopa or caldo de pollo", still match.
 
+The interface is in English and Spanish, following the device language. Strings live in String Catalogs (`Dietapp/Localizable.xcstrings`, and `InfoPlist.xcstrings` for the permission prompts), and `LocalizationTests` fails when a string has no Spanish translation. Food names still show as FoodData Central writes them, in English.
+
 Running the tests:
 
 ```sh

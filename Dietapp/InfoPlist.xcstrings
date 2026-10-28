@@ -1,0 +1,26 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSCameraUsageDescription" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dietapp mira una foto de tu plato para sugerir alimentos. La foto no sale de tu dispositivo."
+          }
+        }
+      }
+    },
+    "NSMicrophoneUsageDescription" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dietapp escucha mientras dictas una comida. Tu voz se transcribe en tu dispositivo."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
