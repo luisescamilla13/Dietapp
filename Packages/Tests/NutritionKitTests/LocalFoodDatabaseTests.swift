@@ -63,8 +63,17 @@ struct SearchRankingTests {
         #expect(ranked.map(\.id) == [2])
     }
 
-    private func candidate(_ name: String, _ score: Double, id: Int64 = 0) -> SearchRanking.Candidate {
-        SearchRanking.Candidate(id: id, name: name, baseScore: score)
+    @Test func keepsTheBestOfRepeatedSpanishNames() {
+        let ranked = SearchRanking.rank([
+            candidate("Pomegranates, raw", 1, id: 1, spanishName: "Granada, cruda"),
+            candidate("Pomegranate, raw", 0, id: 2, spanishName: "Granada, cruda"),
+        ], for: SearchQuery("granada"))
+
+        #expect(ranked.map(\.id) == [2])
+    }
+
+    private func candidate(_ name: String, _ score: Double, id: Int64 = 0, spanishName: String? = nil) -> SearchRanking.Candidate {
+        SearchRanking.Candidate(id: id, name: name, spanishName: spanishName, baseScore: score)
     }
 }
 
@@ -145,6 +154,18 @@ struct LocalFoodDatabaseTests {
         #expect(taco.nutrientsPer100g.calories == 246)
         #expect(taco.nutrientsPer100g.protein == 15.31)
         #expect(taco.portions.map(\.name) == ["1 miniature", "1 small/regular", "1 large", "1 cup", "Quantity not specified"])
+    }
+
+    @Test func namesCommonFoodsAndPortionsInSpanish() async throws {
+        let taco = try #require(try await database.searchFoods(matching: "taco").first)
+        let spanish = Locale.Language(identifier: "es-MX")
+
+        #expect(taco.spanishName == "Taco")
+        #expect(try await database.searchFoods(matching: "huevo").first?.name(in: spanish) == "Huevo entero, crudo")
+        #expect(taco.portions.map { $0.name(in: spanish) } == ["1 miniatura", "1 chico o normal", "1 grande", "1 taza", "Cantidad no especificada"])
+        // English stays the default, and foods without a translation keep their English name.
+        #expect(taco.name(in: Locale.Language(identifier: "en")) == "Taco, NFS")
+        #expect(try await database.searchFoods(matching: "chicken back").first?.name(in: spanish) == "Pollo, rabadilla")
     }
 
     @Test func namesPortionsOfEveryDataset() async throws {

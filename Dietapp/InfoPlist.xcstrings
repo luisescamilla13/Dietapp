@@ -1,8 +1,34 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "NSCameraUsageDescription" : {
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dietapp"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dietapp"
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription" : {
+      "comment" : "Privacy - Camera Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dietapp looks at a photo of your plate to suggest foods. The photo stays on your device."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12,7 +38,15 @@
       }
     },
     "NSMicrophoneUsageDescription" : {
+      "comment" : "Privacy - Microphone Usage Description",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dietapp listens while you dictate a meal. Your speech is transcribed on your device."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",

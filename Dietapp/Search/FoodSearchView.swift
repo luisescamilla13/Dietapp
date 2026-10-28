@@ -77,7 +77,7 @@ struct FoodSearchView: View {
             List(foods) { food in
                 NavigationLink(value: food) {
                     VStack(alignment: .leading) {
-                        Text(food.name)
+                        Text(food.displayName)
                         Text("\(food.nutrientsPer100g.calories, format: .number.precision(.fractionLength(0))) kcal per 100 g")
                             .font(.caption)
                             .foregroundStyle(.secondary)

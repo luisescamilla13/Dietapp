@@ -8,6 +8,7 @@ enum SearchRanking {
     struct Candidate: Equatable {
         var id: Int64
         var name: String
+        var spanishName: String? = nil
         /// SQLite's bm25 text score plus the food's static priority. Lower is better.
         var baseScore: Double
     }
@@ -16,14 +17,20 @@ enum SearchRanking {
     /// salmon. Dishes like "Pie, apple" aren't here, since they aren't the fruit.
     private static let categories: Set<String> = ["crustacean", "fish", "mollusk", "nut", "pepper", "seed", "spice"]
 
-    /// Best first, without repeated names: several datasets have "Strawberries, raw".
+    /// Best first, without repeated names: several datasets have "Strawberries, raw", and
+    /// "Pomegranate, raw" and "Pomegranates, raw" are both "Granada, cruda".
     static func rank(_ candidates: [Candidate], for query: SearchQuery) -> [Candidate] {
         let scored = candidates.map { candidate in (candidate, score(candidate, for: query)) }
         var seen: Set<String> = []
         return scored
             .sorted { $0.1 < $1.1 }
             .map(\.0)
-            .filter { seen.insert($0.name.lowercased()).inserted }
+            .filter { candidate in
+                let names = [candidate.name, candidate.spanishName].compactMap { $0?.lowercased() }
+                guard seen.isDisjoint(with: names) else { return false }
+                seen.formUnion(names)
+                return true
+            }
     }
 
     private static func score(_ candidate: Candidate, for query: SearchQuery) -> Double {

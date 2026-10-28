@@ -55,7 +55,7 @@ public actor LocalFoodDatabase: NutritionSearching {
     /// Foods whose names match every term of the query, by text score and priority.
     private func candidates(matching query: SearchQuery) throws -> [SearchRanking.Candidate] {
         let sql = """
-            SELECT foods.id, foods.name, bm25(foods_search), foods.priority
+            SELECT foods.id, foods.name, foods.name_es, bm25(foods_search), foods.priority
             FROM foods_search JOIN foods ON foods.id = foods_search.rowid
             WHERE foods_search MATCH ?
             ORDER BY \(Self.textScoreWeight) * bm25(foods_search) + foods.priority
@@ -64,13 +64,13 @@ public actor LocalFoodDatabase: NutritionSearching {
         var best: [Int64: SearchRanking.Candidate] = [:]
         for expression in query.matchExpressions {
             let matches = try rows(sql, bindings: [expression]) { statement in
-                (id: sqlite3_column_int64(statement, 0), name: text(statement, 1), textScore: sqlite3_column_double(statement, 2), priority: sqlite3_column_double(statement, 3))
+                (id: sqlite3_column_int64(statement, 0), name: text(statement, 1), spanishName: optionalText(statement, 2), textScore: sqlite3_column_double(statement, 3), priority: sqlite3_column_double(statement, 4))
             }
             // Text scores are relative to the best match of the same expression, so
             // Spanish and English matches compete on priority and ranking alone.
             let bestTextScore = matches.map(\.textScore).min() ?? 0
             for match in matches {
-                let candidate = SearchRanking.Candidate(id: match.id, name: match.name, baseScore: Self.textScoreWeight * (match.textScore - bestTextScore) + match.priority)
+                let candidate = SearchRanking.Candidate(id: match.id, name: match.name, spanishName: match.spanishName, baseScore: Self.textScoreWeight * (match.textScore - bestTextScore) + match.priority)
                 if best[match.id].map({ candidate.baseScore < $0.baseScore }) ?? true {
                     best[match.id] = candidate
                 }
@@ -83,24 +83,25 @@ public actor LocalFoodDatabase: NutritionSearching {
         guard !ids.isEmpty else { return [:] }
         let list = ids.map(String.init).joined(separator: ",")
         var portions: [Int64: [Portion]] = [:]
-        for (id, portion) in try rows("SELECT food_id, name, grams FROM portions WHERE food_id IN (\(list)) ORDER BY food_id, position", read: { statement in
-            (sqlite3_column_int64(statement, 0), Portion(name: text(statement, 1), grams: sqlite3_column_double(statement, 2)))
+        for (id, portion) in try rows("SELECT food_id, name, name_es, grams FROM portions WHERE food_id IN (\(list)) ORDER BY food_id, position", read: { statement in
+            (sqlite3_column_int64(statement, 0), Portion(name: text(statement, 1), spanishName: optionalText(statement, 2), grams: sqlite3_column_double(statement, 3)))
         }) {
             portions[id, default: []].append(portion)
         }
 
-        let foods = try rows("SELECT id, name, calories, protein, carbohydrates, fat, fiber FROM foods WHERE id IN (\(list))") { statement in
+        let foods = try rows("SELECT id, name, name_es, calories, protein, carbohydrates, fat, fiber FROM foods WHERE id IN (\(list))") { statement in
             let id = sqlite3_column_int64(statement, 0)
             return Food(
                 source: .usda,
                 sourceID: String(id),
                 name: text(statement, 1),
+                spanishName: optionalText(statement, 2),
                 nutrientsPer100g: Nutrients(
-                    calories: sqlite3_column_double(statement, 2),
-                    protein: sqlite3_column_double(statement, 3),
-                    carbohydrates: sqlite3_column_double(statement, 4),
-                    fat: sqlite3_column_double(statement, 5),
-                    fiber: sqlite3_column_double(statement, 6)
+                    calories: sqlite3_column_double(statement, 3),
+                    protein: sqlite3_column_double(statement, 4),
+                    carbohydrates: sqlite3_column_double(statement, 5),
+                    fat: sqlite3_column_double(statement, 6),
+                    fiber: sqlite3_column_double(statement, 7)
                 ),
                 portions: portions[id] ?? []
             )
@@ -137,5 +138,9 @@ public actor LocalFoodDatabase: NutritionSearching {
 }
 
 private func text(_ statement: OpaquePointer, _ column: Int32) -> String {
-    sqlite3_column_text(statement, column).map { String(cString: $0) } ?? ""
+    optionalText(statement, column) ?? ""
+}
+
+private func optionalText(_ statement: OpaquePointer, _ column: Int32) -> String? {
+    sqlite3_column_text(statement, column).map { String(cString: $0) }
 }

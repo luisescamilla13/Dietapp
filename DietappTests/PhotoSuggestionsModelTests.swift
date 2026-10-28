@@ -41,7 +41,8 @@ struct PhotoSuggestionsModelTests {
             Issue.record("Expected a failure, got \(model.state)")
             return
         }
-        #expect(message.contains("real device"))
+        // Compared in the language the tests run in, which follows the simulator's.
+        #expect(message == String(localized: "Photo suggestions need a real device. The simulator can't run Vision's classifier."))
     }
 
     @Test func showsSearchTermsInSentenceCase() {

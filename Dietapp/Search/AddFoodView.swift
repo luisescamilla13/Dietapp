@@ -44,7 +44,7 @@ struct AddFoodView: View {
 
     private var portionName: String? {
         guard case .portion(let portion) = unit else { return nil }
-        return quantity == 1 ? portion.name : "\(quantity.formatted()) × \(portion.name)"
+        return quantity == 1 ? portion.displayName : "\(quantity.formatted()) × \(portion.displayName)"
     }
 
     var body: some View {
@@ -56,7 +56,7 @@ struct AddFoodView: View {
                 Picker("Unit", selection: $unit) {
                     Text("Grams").tag(Unit.grams)
                     ForEach(food.portions, id: \.self) { portion in
-                        Text("\(portion.name) (\(portion.grams.formatted()) g)").tag(Unit.portion(portion))
+                        Text("\(portion.displayName) (\(portion.grams.formatted()) g)").tag(Unit.portion(portion))
                     }
                 }
                 LabeledContent(unit == .grams ? "Grams" : "Quantity") {
@@ -72,7 +72,7 @@ struct AddFoodView: View {
                 Text(errorMessage).foregroundStyle(.red)
             }
         }
-        .navigationTitle(food.name)
+        .navigationTitle(food.displayName)
         .onChange(of: unit) { _, newUnit in
             quantity = newUnit == .grams ? 100 : 1
         }
@@ -85,7 +85,7 @@ struct AddFoodView: View {
     private func add() {
         do {
             let log = FoodLog(context: context)
-            try log.log(food, grams: grams, portionName: portionName, to: meal, at: log.loggingDate(for: day))
+            try log.log(food, named: food.displayName, grams: grams, portionName: portionName, to: meal, at: log.loggingDate(for: day))
             onLogged()
         } catch {
             errorMessage = String(localized: "Couldn't save the food. Try again.")
