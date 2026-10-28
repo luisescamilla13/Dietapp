@@ -63,6 +63,8 @@ Search uses SQLite's FTS5 for candidates, then ranks them in Swift (`SearchRanki
 
 The interface is in English and Spanish, following the device language. Strings live in String Catalogs (`Dietapp/Localizable.xcstrings`, and `InfoPlist.xcstrings` for the permission prompts), and `LocalizationTests` fails when a string has no Spanish translation. Food names follow the interface language too: the 666 foods searches find most often have a hand-written Spanish name in `Tools/spanish_food_names.tsv`, and common portions ("1 cup" → "1 taza") one in `Tools/spanish_portion_names.tsv`. Less common foods keep their English name.
 
+For accessibility, `testScreensPassTheAccessibilityAudit` runs Xcode's accessibility audit on every screen (labels, contrast, hit areas, traits), and `testLargeTextLayouts` checks the largest accessibility text size, where the macro rings become rows and the history chart labels fewer days. The audit's known false positives from system controls are listed in the test with the reason for each.
+
 Running the tests:
 
 ```sh
@@ -74,7 +76,7 @@ cd Packages && swift test
 xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
   -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -only-testing:DietappTests
 
-# End-to-end UI test: search, log a food, check Today and History
+# UI tests: logging flows, Spanish interface, accessibility audit and large text
 xcodebuild test -project Dietapp.xcodeproj -scheme Dietapp \
   -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -only-testing:DietappUITests \
   -parallel-testing-enabled NO

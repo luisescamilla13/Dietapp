@@ -46,6 +46,7 @@ private struct CalorieHistory: View {
 
     @Query private var meals: [Meal]
     @Environment(GoalsSettings.self) private var goals
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     init(start: Date, end: Date) {
         self.start = start
@@ -79,7 +80,7 @@ private struct CalorieHistory: View {
                     }
             }
             .chartXAxis {
-                AxisMarks(values: .stride(by: .day, count: totals.count > 7 ? 7 : 1)) {
+                AxisMarks(values: .stride(by: .day, count: axisLabelStride(days: totals.count))) {
                     AxisValueLabel(format: .dateTime.weekday(.narrow).day())
                 }
             }
@@ -97,6 +98,13 @@ private struct CalorieHistory: View {
         } footer: {
             Text("The average only counts days with something logged.")
         }
+    }
+
+    /// Days between axis labels: every day for a week, fewer when the text is large or
+    /// the range is long, so labels don't overlap.
+    private func axisLabelStride(days: Int) -> Int {
+        let labels = dynamicTypeSize.isAccessibilitySize ? 3 : dynamicTypeSize > .large ? 4 : 7
+        return max(1, Int((Double(days) / Double(labels)).rounded(.up)))
     }
 }
 

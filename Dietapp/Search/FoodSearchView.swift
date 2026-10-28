@@ -23,7 +23,7 @@ struct FoodSearchView: View {
             content
                 .navigationTitle("Add food")
                 .navigationBarTitleDisplayMode(.inline)
-                .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search foods in English or Spanish")
+                .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search foods")
                 .toolbar {
                     Button("Cancel", role: .cancel) { dismiss() }
                 }

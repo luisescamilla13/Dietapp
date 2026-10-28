@@ -178,15 +178,79 @@ final class DietappUITests: XCTestCase {
         attachScreenshot(of: app, named: "live-review")
     }
 
+    /// Xcode's accessibility audit on every screen: labels, contrast, hit regions and
+    /// traits. Dynamic Type and clipping are checked by `testLargeTextLayouts` instead.
+    @MainActor
+    func testScreensPassTheAccessibilityAudit() throws {
+        continueAfterFailure = true
+        let app = launchApp()
+        try audit(app, "Today")
+        app.buttons["Previous day"].tap()
+        XCTAssertTrue(app.navigationBars["Yesterday"].waitForExistence(timeout: 5))
+        try audit(app, "Yesterday")
+        app.buttons["Back to today"].tap()
+
+        app.navigationBars.buttons["Goals"].tap()
+        XCTAssertTrue(app.navigationBars["Goals"].waitForExistence(timeout: 5))
+        try audit(app, "Goals")
+        app.buttons["Cancel"].tap()
+
+        app.navigationBars.buttons["Add food"].tap()
+        XCTAssertTrue(app.searchFields.firstMatch.waitForExistence(timeout: 5))
+        try audit(app, "Add food")
+        app.buttons["Describe your meal"].tap()
+        XCTAssertTrue(app.buttons["Find foods"].waitForExistence(timeout: 5))
+        try audit(app, "Describe your meal")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        let search = app.searchFields.firstMatch
+        search.tap()
+        search.typeText("apple")
+        let result = app.staticTexts["Apple, raw"]
+        XCTAssertTrue(result.waitForExistence(timeout: 5))
+        try audit(app, "Search results")
+        result.tap()
+        XCTAssertTrue(app.navigationBars.buttons["Add"].waitForExistence(timeout: 5))
+        try audit(app, "Add a food")
+        app.navigationBars.buttons["Add"].tap()
+
+        app.staticTexts["Apple, raw"].tap()
+        XCTAssertTrue(app.buttons["Delete food"].waitForExistence(timeout: 5))
+        try audit(app, "Edit a food")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        app.tabBars.buttons["History"].tap()
+        XCTAssertTrue(app.navigationBars["History"].waitForExistence(timeout: 5))
+        try audit(app, "History")
+    }
+
+    /// At the largest accessibility text size, the macro rings become rows and the
+    /// history chart labels fewer days, so nothing wraps mid-word or overlaps.
+    @MainActor
+    func testLargeTextLayouts() throws {
+        let app = launchApp(textSize: "UICTContentSizeCategoryAccessibilityXXXL")
+        // Each ring is one accessibility element, labeled with its macro.
+        let protein = app.otherElements["Protein"]
+        let carbs = app.otherElements["Carbs"]
+        XCTAssertTrue(protein.waitForExistence(timeout: 5))
+        XCTAssertGreaterThan(carbs.frame.minY, protein.frame.maxY - 1, "Carbs sits below protein, not beside it")
+        attachScreenshot(of: app, named: "14-large-text-today")
+
+        app.tabBars.buttons["History"].tap()
+        XCTAssertTrue(app.navigationBars["History"].waitForExistence(timeout: 5))
+        attachScreenshot(of: app, named: "15-large-text-history")
+    }
+
     // MARK: - Helpers
 
     @MainActor
     /// In English unless `language` says otherwise, whatever the simulator's language.
-    private func launchApp(stubbingSearch: Bool = true, language: String = "en", region: String = "en_US") -> XCUIApplication {
+    private func launchApp(stubbingSearch: Bool = true, language: String = "en", region: String = "en_US", textSize: String? = nil) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["-in-memory-store", "-stub-parser", "-stub-dictation", "-stub-recognizer"]
             + (stubbingSearch ? ["-stub-search"] : [])
             + ["-AppleLanguages", "(\(language))", "-AppleLocale", region]
+            + (textSize.map { ["-UIPreferredContentSizeCategoryName", $0] } ?? [])
         app.launch()
         return app
     }
@@ -208,6 +272,32 @@ final class DietappUITests: XCTestCase {
         attachScreenshot(of: app, named: "3-add-food")
         app.navigationBars.buttons["Add"].tap()
         XCTAssertTrue(app.staticTexts["Apple, raw"].waitForExistence(timeout: 5))
+    }
+
+    /// Runs the audit and records every issue it finds, instead of stopping at the first.
+    ///
+    /// Leaves out what the system draws rather than the app, which the audit misreads:
+    /// - Dynamic Type and clipped text, reported for system form rows, pickers and fields
+    ///   that show their whole text. `testLargeTextLayouts` covers large text instead.
+    /// - Anything on or behind the navigation and tab bars, whose glass the audit
+    ///   measures as the background.
+    /// - "Nearly passed" contrast, which is the system's secondary label color.
+    /// - Text with no element, which is Swift Charts' axis labels. The chart itself is
+    ///   one accessible element with a value for each day.
+    @MainActor
+    private func audit(_ app: XCUIApplication, _ screen: String) throws {
+        let bars = [app.navigationBars.firstMatch, app.tabBars.firstMatch].filter(\.exists).map(\.frame)
+        try app.performAccessibilityAudit(for: XCUIAccessibilityAuditType.all.subtracting([.dynamicType, .textClipped])) { issue in
+            let isOnABar = issue.element.map { element in bars.contains { $0.intersects(element.frame) } } ?? false
+            let isNearlyPassingContrast = issue.auditType == .contrast && issue.compactDescription.contains("nearly passed")
+            let isChartText = issue.element == nil && issue.auditType == .elementDetection
+            if isOnABar || isNearlyPassingContrast || isChartText {
+                return true
+            }
+            let element = issue.element.map { "\($0.elementType) \"\($0.label)\"" } ?? "no element"
+            XCTFail("\(screen): \(issue.compactDescription) (\(element))")
+            return true
+        }
     }
 
     @MainActor
